@@ -1,0 +1,97 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* ボックスモデルの設定 */
+}
+
+body {
+	margin-top: 50px; /* フッターの高さ分余白を設定 */
+    margin-bottom: 60px; /* フッターの高さ分余白を設定 */
+}
+
+header, footer {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    box-sizing: border-box; /* ボックスモデルの設定 */
+    z-index : 999;  /* 要素が常に表に表示されるように重なり順を指定 */
+}
+
+header {
+    background: #000000;
+    border-bottom: 5px solid #37a29B;
+    color: #ffffff;
+    margin-bottom: 10px;
+    top: 0;
+}
+
+header ul {
+    display: flex;
+    list-style: none;
+    flex-flow: row;
+    margin: 0;
+    padding: 5px 10px 0px 10px;
+}
+
+header li a {
+    display: inline-block;
+    padding: 5px 10px;
+    text-decoration: none;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+header li a:hover {
+    background: #37a29B;
+    border-radius: 5px 10px 0 0;
+}
+
+header li.contact {
+    margin-left: auto;
+}
+
+footer {
+    background: #000000;
+    border-top: 5px solid #37a29B;
+    color: #ffffff;
+    bottom: 0;
+    width: 100%; /* フッターの横幅を100%に設定 */
+    box-sizing: border-box; /* ボックスモデルの設定 */
+    margin: 0;
+}
+
+footer ul {
+    display: flex;
+    list-style: none;
+    flex-flow: row;
+    margin: 0;
+    padding: 5px 10px 0px 10px;
+}
+
+footer li a {
+    display: inline-block;
+    padding: 5px 10px;
+    text-decoration: none;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+footer li a:hover {
+    background: #37a29B;
+    border-radius: 5px 10px 0 0;
+}
+
+footer li.contact {
+    margin-left: auto;
+}
+
+.button{
+    margin: 0;
+    padding: 5px 10px 0px 10px;
+}
+
+.required-label::after {
+    content: "【必須】";
+    color: red;
+    font-weight: bold; 
+}

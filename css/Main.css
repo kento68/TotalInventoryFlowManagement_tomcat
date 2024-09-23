@@ -1,0 +1,111 @@
+/* グローバルリセット */
+* {
+    margin: 0; /* すべての要素の余白を0に設定 */
+    padding: 0; /* すべての要素のパディングを0に設定 */
+    box-sizing: border-box; /* すべての要素のボックスモデルをborder-boxに設定 */
+}
+
+/* bodyスタイル */
+body {
+    margin-top: 50px; /* 上部に50pxの余白を設定 */
+    margin-bottom: 60px; /* 下部に60pxの余白を設定 */
+}
+
+/* headerとfooterの共通スタイル */
+header, footer {
+    width: 100%; /* 幅を100%に設定 */
+    position: fixed; /* 画面に固定 */
+    left: 0; /* 左端に固定 */
+    box-sizing: border-box; /* ボックスモデルの設定 */
+    z-index: 999; /* 要素が常に表に表示されるように重なり順を指定 */
+}
+
+/* headerスタイル */
+header {
+    background: #000000; /* 背景色を黒に設定 */
+    border-bottom: 5px solid #37a29B; /* 下に5pxの青緑色のボーダーを設定 */
+    color: #ffffff; /* テキスト色を白に設定 */
+    margin-bottom: 10px; /* 下に10pxの余白を設定 */
+    top: 0; /* 画面の上部に固定 */
+}
+
+/* header内部のリストスタイル */
+header ul {
+    display: flex; /* フレックスボックスレイアウトを使用 */
+    list-style: none; /* リストスタイルを削除 */
+    flex-flow: row; /* 水平方向に子要素を並べる */
+    margin: 0; /* 余白をリセット */
+    padding: 5px 10px 0 10px; /* 上に5px、左右に10pxのパディングを設定 */
+}
+
+/* headerのリンクスタイル */
+header li a {
+    display: inline-block; /* インラインブロック要素に設定 */
+    padding: 5px 10px; /* 上下に5px、左右に10pxのパディングを設定 */
+    text-decoration: none; /* テキストの下線を削除 */
+    font-size: 14px; /* フォントサイズを14pxに設定 */
+    color: #ffffff; /* テキスト色を白に設定 */
+}
+
+/* headerのリンクのホバースタイル */
+header li a:hover {
+    background: #37a29B; /* 背景色を青緑色に変更（ホバー時） */
+    border-radius: 5px 10px 0 0; /* 角を丸くする */
+}
+
+/* headerの連絡先項目のスタイル */
+header li.contact {
+    margin-left: auto; /* この要素を右端に配置 */
+}
+
+/* footerスタイル */
+footer {
+    background: #000000; /* 背景色を黒に設定 */
+    border-top: 5px solid #37a29B; /* 上に5pxの青緑色のボーダーを設定 */
+    color: #ffffff; /* テキスト色を白に設定 */
+    bottom: 0; /* 画面の下部に固定 */
+    width: 100%; /* 横幅を画面全体に広げる */
+    box-sizing: border-box; /* ボックスモデルの設定 */
+    margin: 0; /* 余白をリセット */
+}
+
+/* footer内部のリストスタイル */
+footer ul {
+    display: flex; /* フレックスボックスレイアウトを使用 */
+    list-style: none; /* リストスタイルを削除 */
+    flex-flow: row; /* 水平方向に子要素を並べる */
+    margin: 0; /* 余白をリセット */
+    padding: 5px 10px 0 10px; /* 上に5px、左右に10pxのパディングを設定 */
+}
+
+/* footerのリンクスタイル */
+footer li a {
+    display: inline-block; /* インラインブロック要素に設定 */
+    padding: 5px 10px; /* 上下に5px、左右に10pxのパディングを設定 */
+    text-decoration: none; /* テキストの下線を削除 */
+    font-size: 14px; /* フォントサイズを14pxに設定 */
+    color: #ffffff; /* テキスト色を白に設定 */
+}
+
+/* footerのリンクのホバースタイル */
+footer li a:hover {
+    background: #37a29B; /* 背景色を青緑色に変更（ホバー時） */
+    border-radius: 5px 10px 0 0; /* 角を丸くする */
+}
+
+/* footerの連絡先項目のスタイル */
+footer li.contact {
+    margin-left: auto; /* この要素を右端に配置 */
+}
+
+/* h1スタイル */
+h1 {
+    font-size: 20px; /* 文字の大きさを指定 */
+}
+
+/* h2スタイル */
+h2 {
+    padding-left: 10px; /* 左側に10pxのパディングを設定 */
+    border-left: 8px solid #2097B6; /* 左側に8pxの青緑色のボーダーを設定 */
+    font-size: 18px; /* 文字の大きさを指定 */
+}
