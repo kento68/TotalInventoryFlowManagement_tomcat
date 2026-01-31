@@ -13,11 +13,12 @@ public class Masterinventory implements Serializable{
 	private String qrcodeinformation; //QRCode情報
 	private String storagelocation; //保管先
 	private String inventorymanagementclassification; //在庫管理区分
+	private float    rate; //単価
 	
 	public Masterinventory(){}
 	public Masterinventory(String identifier,String identificationnumber,String vendor,String productname_asplus,String productnumber_asplus,
 			       String productname_correction,String productnumber_correction,
-			       String qrcodeinformation,String storagelocation,String inventorymanagementclassification){
+			       String qrcodeinformation,String storagelocation,String inventorymanagementclassification,float rate){
 		
 		this.identifier=identifier;
 		this.identificationnumber=identificationnumber;
@@ -29,13 +30,14 @@ public class Masterinventory implements Serializable{
 		this.qrcodeinformation=qrcodeinformation;
 		this.storagelocation=storagelocation;
 		this.inventorymanagementclassification=inventorymanagementclassification;
+		this.rate=rate;
 	}
 	public Masterinventory(int id,String identifier,String identificationnumber,String vendor,String productname_asplus,String productnumber_asplus,
 		       String productname_correction,String productnumber_correction,
-		       String qrcodeinformation,String storagelocation,String inventorymanagementclassification){
+		       String qrcodeinformation,String storagelocation,String inventorymanagementclassification,float rate){
 		
 		this(identifier,identificationnumber,vendor,productname_asplus,productnumber_asplus,productname_correction,productnumber_correction,
-				qrcodeinformation,storagelocation,inventorymanagementclassification);
+				qrcodeinformation,storagelocation,inventorymanagementclassification,rate);
 		
 		this.id=id;
 	}
@@ -104,5 +106,11 @@ public class Masterinventory implements Serializable{
 	}
 	public void setInventorymanagementclassification(String inventorymanagementclassification) {
 		this.inventorymanagementclassification = inventorymanagementclassification;
+	}
+	public float getRate() {
+		return rate;
+	}
+	public void setRate(float rate) {
+		this.rate = rate;
 	}
 }

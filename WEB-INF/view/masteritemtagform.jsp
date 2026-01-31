@@ -27,13 +27,14 @@
     String qrcodeinformation = masteritemtag == null ? "" : masteritemtag.getQrcodeinformation();
     String storagelocation = masteritemtag == null ? "" : masteritemtag.getStoragelocation();
     String inventorymanagementclassification = masteritemtag == null ? "" : masteritemtag.getInventorymanagementclassification();
-    String quantity = masteritemtag == null ? "" : String.valueOf(masteritemtag.getQuantity());
+    String quantity = masteritemtag == null ? "" : masteritemtag.getQuantity();
     String outline = masteritemtag == null ? "" : masteritemtag.getOutline();
     String paperColor = masteritemtag == null ? "" : masteritemtag.getPaperColor();
     String quantitySelectionAvailability = masteritemtag == null ? "" : masteritemtag.getQuantitySelectionAvailability();
-    String quantitySelectionRange = masteritemtag == null ? "" : String.valueOf(masteritemtag.getQuantitySelectionRange());
+    String quantitySelectionRange = masteritemtag == null ? "" : masteritemtag.getQuantitySelectionRange();
     String pattern = masteritemtag == null ? "" : masteritemtag.getPattern();
     String photoAvailability = masteritemtag == null ? "" : masteritemtag.getPhotoAvailability();
+    String rate = masteritemtag == null ? "" : String.valueOf(masteritemtag.getRate());
 	
 	String id=masteritemtag==null ? "":String.valueOf(masteritemtag.getId());
 	
@@ -204,6 +205,7 @@
         <option value="自動倉庫">自動倉庫</option>
         <option value="テント倉庫">テント倉庫</option>
         <option value="工場内">工場内</option>
+        <option value="不明">不明</option>
     </select>
  </div>
  <div class="form-group col-sm-6">
@@ -215,7 +217,11 @@
         <option value="9182">9184:部品</option>
         <option value="9185">9185:材料</option>
         <option value="8888">8888:副資材</option>
+        <option value="9144">9144:外注部品</option>
+        <option value="9142">9142:外注仕掛品</option>
+        <option value="9141">9141:外注完成品</option>
         <option value="9999">9999:/</option>
+        <option value="0">0000：不明</option>
     </select>
  </div>
 </div>
@@ -270,13 +276,13 @@
 <!-- <label for="flag"><b>数量選択幅:　</b></label> -->
 <input type="hidden" class="form-control" id="quantitySelectionRange" name="quantitySelectionRange" value="0"required>
 <!-- <label for="flag"><b>数量選択有無:　</b></label> -->
-<input type="hidden" class="form-control" id="quantitySelectionAvailability" name="quantitySelectionAvailability" value="-"required>
+<input type="hidden" class="form-control" id="quantitySelectionAvailability" name="quantitySelectionAvailability" value="無"required>
 <!-- <label for="flag"><b>用紙色:　</b></label> -->
-<input type="hidden" class="form-control" id="paperColor" name="paperColor" value="-"required>
+<input type="hidden" class="form-control" id="paperColor" name="paperColor" value="無"required>
 <!-- <label for="flag"><b>写真有無:　</b></label> -->
-<input type="hidden" class="form-control" id="photoAvailability" name="photoAvailability" value="-"required>
+<input type="hidden" class="form-control" id="photoAvailability" name="photoAvailability" value="無"required>
 <!-- <label for="flag"><b>白抜き有無:　</b></label> -->
-<input type="hidden" class="form-control" id="outline" name="outline" value="-"required>
+<input type="hidden" class="form-control" id="outline" name="outline" value="無"required>
 
 
 <div class="form-row">
@@ -287,6 +293,13 @@
   <div class="form-group col-sm-6">
   	<button type="button" class="btn btn-primary custom-btn" id="qrcodegenerationinformation" style="margin-top: 32px;">QRCode生成</button>
    </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group col-sm-6">
+    <label for="rate" class="required-label" id="rate_label"><b>単価:</b></label>
+    <input type="float" class="form-control" id="rate" name="rate" value="<%=rate%>" placeholder="単価を入力してください" >
+  </div>
 </div>
 
 <%if(!id.isEmpty()) {%>
@@ -528,6 +541,20 @@ document.addEventListener('DOMContentLoaded', function() {
       inputField.setCustomValidity('');
     }
   });
+});
+
+<!-- 単価:初期値に基づいて分岐 -->
+document.addEventListener('DOMContentLoaded', function () {
+	var rateValue = '<%=rate%>';
+    var selectElement = document.getElementsByName('rate')[0]; 
+
+    // 初期値が空の場合は何も選択しない
+    if (!rateValue) {
+        selectElement.value = '';
+    } else {
+        // 初期値が存在する場合は対応するオプションを選択
+        selectElement.value = rateValue;
+    }
 });
 
 </script>

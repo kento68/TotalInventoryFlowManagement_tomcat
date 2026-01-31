@@ -55,6 +55,7 @@ public class MasterinventoryForm extends HttpServlet {
 		String storagelocation=request.getParameter("storagelocation");
 		String inventorymanagementclassification=request.getParameter("inventorymanagementclassification");
 		String identifier=request.getParameter("identifier");
+		String rate=request.getParameter("rate");
 	
 		if(storagelocation.isEmpty() || qrcodeinformation.isEmpty()){
 			request.setAttribute("err","未記入の項目があります！");
@@ -64,12 +65,12 @@ public class MasterinventoryForm extends HttpServlet {
 			if(id != null){
 				dao.updateOne(new Masterinventory(Integer.parseInt(id),identifier,identificationnumber,vendor,
 						productname_asplus,productnumber_asplus,productname_correction,productnumber_correction,
-						qrcodeinformation,storagelocation,inventorymanagementclassification));
+						qrcodeinformation,storagelocation,inventorymanagementclassification,Float.parseFloat(rate)));
 				request.setAttribute("msg","1件更新しました。");
 			}else{
 				dao.insertOne(new Masterinventory(identifier,identificationnumber,vendor,
 						productname_asplus,productnumber_asplus,productname_correction,productnumber_correction,
-						qrcodeinformation,storagelocation,inventorymanagementclassification));
+						qrcodeinformation,storagelocation,inventorymanagementclassification,Float.parseFloat(rate)));
 				request.setAttribute("msg","1件登録しました。");
 			}
 		}

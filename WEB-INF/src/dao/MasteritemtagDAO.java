@@ -1,8 +1,11 @@
 package dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -75,21 +78,22 @@ private void getConnection() throws NamingException, SQLException{
 	            String qrcodeinformation = rs.getString("qrcodeinformation");
 	            String storagelocation = rs.getString("storagelocation");
 	            String inventorymanagementclassification = rs.getString("inventorymanagementclassification");
-	            int quantity = rs.getInt("quantity");
+	            String quantity = rs.getString("quantity");
 	            String outline = rs.getString("outline");
 	            String paperColor = rs.getString("paperColor");
 	            String quantitySelectionAvailability = rs.getString("quantitySelectionAvailability");
-	            int quantitySelectionRange = rs.getInt("quantitySelectionRange");
+	            String quantitySelectionRange = rs.getString("quantitySelectionRange");
 	            String storageLocation = rs.getString("storageLocation");
 	            String pattern = rs.getString("pattern");
 	            String photoAvailability = rs.getString("photoAvailability");
+	            float rate=rs.getFloat("rate");
 
 	            Masteritemtag masteritemtag = new Masteritemtag(id,identifier, identificationnumber, vendor, productname_asplus, productnumber_asplus, productname_emphasisColor, 
 	       	         productnumber_asplussub1, productnumber_asplus_emphasissub1, productnumber_asplus2sub, productnumber_asplus_emphasis2sub, 
 	    	         productnumber_asplus3sub, productnumber_asplus_emphasis3sub, productnumber_asplus4sub, productnumber_asplus5sub, 
 	    	         productnumber_asplus6sub, productnumber_asplus7sub, productnumber_asplus8sub, productnumber_asplus9sub, productnumber_Color, 
 	    	         qrcodeinformation, storagelocation, inventorymanagementclassification, quantity, outline, paperColor, 
-	    	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability);
+	    	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability,rate);
 	            
 	            masteritemtagList.add(masteritemtag);
 	        }
@@ -117,7 +121,7 @@ private void getConnection() throws NamingException, SQLException{
 	                + "AND productnumber_asplus5sub = ? AND productnumber_asplus6sub = ? "
 	                + "AND productnumber_asplus7sub = ? AND productnumber_asplus8sub = ? "
 	                + "AND productnumber_asplus9sub = ? AND productnumber_Color = ? "
-	                + "AND qrcodeinformation = ? AND storagelocation = ? AND inventorymanagementclassification = ?");
+	                + "AND qrcodeinformation = ? AND storagelocation = ? AND inventorymanagementclassification = ? AND rate = ?");
 
 	        ps.setString(1, masteritemtag.getIdentifier());
 	        ps.setString(2, masteritemtag.getIdentificationnumber());
@@ -141,6 +145,7 @@ private void getConnection() throws NamingException, SQLException{
 	        ps.setString(20, masteritemtag.getQrcodeinformation());
 	        ps.setString(21, masteritemtag.getStoragelocation());
 	        ps.setString(22, masteritemtag.getInventorymanagementclassification());
+	        ps.setFloat(23, masteritemtag.getRate());
 
 	        ResultSet rs = ps.executeQuery();
 	        if (rs.next() && rs.getInt(1) > 0) {
@@ -156,7 +161,8 @@ private void getConnection() throws NamingException, SQLException{
 	                + "productnumber_asplus3sub, productnumber_asplus_emphasis3sub, productnumber_asplus4sub, "
 	                + "productnumber_asplus5sub, productnumber_asplus6sub, productnumber_asplus7sub, "
 	                + "productnumber_asplus8sub, productnumber_asplus9sub, productnumber_Color, qrcodeinformation, "
-	                + "storagelocation, inventorymanagementclassification) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	                + "storagelocation, inventorymanagementclassification,rate) "
+	                + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 	        ps.setString(1, masteritemtag.getIdentifier());
 	        ps.setString(2, masteritemtag.getIdentificationnumber());
@@ -180,6 +186,7 @@ private void getConnection() throws NamingException, SQLException{
 	        ps.setString(20, masteritemtag.getQrcodeinformation());
 	        ps.setString(21, masteritemtag.getStoragelocation());
 	        ps.setString(22, masteritemtag.getInventorymanagementclassification());
+	        ps.setFloat(23, masteritemtag.getRate());
 
 	        int result = ps.executeUpdate();
 
@@ -228,21 +235,22 @@ private void getConnection() throws NamingException, SQLException{
 	            String qrcodeinformation = rs.getString("qrcodeinformation");
 	            String storagelocation = rs.getString("storagelocation");
 	            String inventorymanagementclassification = rs.getString("inventorymanagementclassification");
-	            int quantity = rs.getInt("quantity");
+	            String quantity = rs.getString("quantity");
 	            String outline = rs.getString("outline");
 	            String paperColor = rs.getString("paperColor");
 	            String quantitySelectionAvailability = rs.getString("quantitySelectionAvailability");
-	            int quantitySelectionRange = rs.getInt("quantitySelectionRange");
+	            String quantitySelectionRange = rs.getString("quantitySelectionRange");
 	            String storageLocation = rs.getString("storageLocation");
 	            String pattern = rs.getString("pattern");
 	            String photoAvailability = rs.getString("photoAvailability");
+	            float rate=rs.getFloat("rate");
 
 	            masteritemtag = new Masteritemtag(id,identifier, identificationnumber, vendor, productname_asplus, productnumber_asplus, productname_emphasisColor, 
 	       	         productnumber_asplussub1, productnumber_asplus_emphasissub1, productnumber_asplus2sub, productnumber_asplus_emphasis2sub, 
 	    	         productnumber_asplus3sub, productnumber_asplus_emphasis3sub, productnumber_asplus4sub, productnumber_asplus5sub, 
 	    	         productnumber_asplus6sub, productnumber_asplus7sub, productnumber_asplus8sub, productnumber_asplus9sub, productnumber_Color, 
 	    	         qrcodeinformation, storagelocation, inventorymanagementclassification, quantity, outline, paperColor, 
-	    	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability);
+	    	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability,rate);
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -264,7 +272,7 @@ private void getConnection() throws NamingException, SQLException{
 	                + "productnumber_asplus5sub=?, productnumber_asplus6sub=?, productnumber_asplus7sub=?, productnumber_asplus8sub=?,"
 	                + "productnumber_asplus9sub=?, productnumber_Color=?, qrcodeinformation=?, storagelocation=?,"
 	                + "inventorymanagementclassification=?, quantity=?, outline=?, paperColor=?, quantitySelectionAvailability=?,"
-	                + "quantitySelectionRange=?, pattern=?, photoAvailability=? WHERE id=?");
+	                + "quantitySelectionRange=?, pattern=?, photoAvailability=?, rate=? WHERE id=?");
 
 	        ps.setString(1, masteritemtag.getIdentifier());
 	        ps.setString(2, masteritemtag.getIdentificationnumber());
@@ -288,15 +296,16 @@ private void getConnection() throws NamingException, SQLException{
 	        ps.setString(20, masteritemtag.getQrcodeinformation());
 	        ps.setString(21, masteritemtag.getStoragelocation());
 	        ps.setString(22, masteritemtag.getInventorymanagementclassification());
-	        ps.setInt(23, masteritemtag.getQuantity());
+	        ps.setString(23, masteritemtag.getQuantity());
 	        ps.setString(24, masteritemtag.getOutline());
 	        ps.setString(25, masteritemtag.getPaperColor());
 	        ps.setString(26, masteritemtag.getQuantitySelectionAvailability());
-	        ps.setInt(27, masteritemtag.getQuantitySelectionRange());
+	        ps.setString(27, masteritemtag.getQuantitySelectionRange());
 	        ps.setString(28, masteritemtag.getPattern());
 	        ps.setString(29, masteritemtag.getPhotoAvailability());
+	        ps.setFloat(30, masteritemtag.getRate());
 
-	        ps.setInt(30, masteritemtag.getId());
+	        ps.setInt(31, masteritemtag.getId());
 
 	        int result = ps.executeUpdate();
 	        if (result != 1) {
@@ -345,7 +354,7 @@ private void getConnection() throws NamingException, SQLException{
 	                + "productnumber_asplus8sub LIKE ? OR productnumber_asplus9sub LIKE ? OR productnumber_Color LIKE ? OR "
 	                + "qrcodeinformation LIKE ? OR storagelocation LIKE ? OR inventorymanagementclassification LIKE ? OR "
 	                + "quantity LIKE ? OR outline LIKE ? OR paperColor LIKE ? OR quantitySelectionAvailability LIKE ? OR "
-	                + "quantitySelectionRange LIKE ? OR pattern LIKE ? OR photoAvailability LIKE ?");
+	                + "quantitySelectionRange LIKE ? OR pattern LIKE ? OR photoAvailability LIKE ? OR rate LIKE ?");
 
 	        String searchPattern = "%" + search + "%";
 
@@ -379,6 +388,7 @@ private void getConnection() throws NamingException, SQLException{
 	        ps.setString(27, searchPattern); // quantitySelectionRange LIKE ?
 	        ps.setString(28, searchPattern); // pattern LIKE ?
 	        ps.setString(29, searchPattern); // photoAvailability LIKE ?
+	        ps.setString(30, searchPattern); // rate ?
 
 	        rs = ps.executeQuery();
 	        while (rs.next()) {
@@ -405,13 +415,14 @@ private void getConnection() throws NamingException, SQLException{
 	            String qrcodeinformation = rs.getString("qrcodeinformation");
 	            String storagelocation = rs.getString("storagelocation");
 	            String inventorymanagementclassification = rs.getString("inventorymanagementclassification");
-	            int quantity = rs.getInt("quantity");
+	            String quantity = rs.getString("quantity");
 	            String outline = rs.getString("outline");
 	            String paperColor = rs.getString("paperColor");
 	            String quantitySelectionAvailability = rs.getString("quantitySelectionAvailability");
-	            int quantitySelectionRange = rs.getInt("quantitySelectionRange");
+	            String quantitySelectionRange = rs.getString("quantitySelectionRange");
 	            String pattern = rs.getString("pattern");
 	            String photoAvailability = rs.getString("photoAvailability");
+	            float rate=rs.getFloat("rate");
 
 	            // Create Masterinventory object with retrieved values
 	            Masteritemtag masteritemtag = new Masteritemtag(id,identifier, identificationnumber, vendor, productname_asplus, productnumber_asplus, productname_emphasisColor, 
@@ -419,7 +430,7 @@ private void getConnection() throws NamingException, SQLException{
 		    	         productnumber_asplus3sub, productnumber_asplus_emphasis3sub, productnumber_asplus4sub, productnumber_asplus5sub, 
 		    	         productnumber_asplus6sub, productnumber_asplus7sub, productnumber_asplus8sub, productnumber_asplus9sub, productnumber_Color, 
 		    	         qrcodeinformation, storagelocation, inventorymanagementclassification, quantity, outline, paperColor, 
-		    	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability);
+		    	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability,rate);
 		            
 		            masteritemtagList.add(masteritemtag);
 	        }
@@ -444,16 +455,17 @@ private void getConnection() throws NamingException, SQLException{
 
 	                String[] columns = line.split(",", -1);
 
-	                if (columns.length == 29) {
+	                if (columns.length == 30) {
+	                	float column29 = Float.parseFloat(columns[29]);
 	                	Masteritemtag masteritemtag = new Masteritemtag(
 	                        columns[0],columns[1],columns[2],columns[3],
 	                        columns[4],columns[5],columns[6],columns[7],
 	                        columns[8],columns[9],columns[10],columns[11],
 	                        columns[12],columns[13],columns[14],columns[15],
 	                        columns[16],columns[17],columns[18],columns[19],
-	                        columns[20],columns[21],Integer.parseInt(columns[22]),columns[23],
-	                        columns[24],columns[25],Integer.parseInt(columns[26]),columns[27],
-	                        columns[28]
+	                        columns[20],columns[21],columns[22],columns[23],
+	                        columns[24],columns[25],columns[26],columns[27],
+	                        columns[28],column29
 	                    );
 	                	masteritemtagList.add(masteritemtag);
 	                } else {
@@ -480,8 +492,8 @@ private void getConnection() throws NamingException, SQLException{
 	                + "productnumber_asplus7sub, productnumber_asplus8sub, productnumber_asplus9sub, "
 	                + "productnumber_Color, qrcodeinformation, storagelocation, inventorymanagementclassification, "
 	                + "quantity, outline, paperColor, quantitySelectionAvailability, quantitySelectionRange, "
-	                + "pattern, photoAvailability) "
-	                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	                + "pattern, photoAvailability,rate) "
+	                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 	        for (Masteritemtag masteritemtag : masteritemtagList) {
 		        // プリペアドステートメントのパラメータを設定
@@ -507,13 +519,14 @@ private void getConnection() throws NamingException, SQLException{
 		        ps.setString(20, masteritemtag.getQrcodeinformation());
 		        ps.setString(21, masteritemtag.getStoragelocation());
 		        ps.setString(22, masteritemtag.getInventorymanagementclassification());
-		        ps.setInt(23, masteritemtag.getQuantity());
+		        ps.setString(23, masteritemtag.getQuantity());
 		        ps.setString(24, masteritemtag.getOutline());
 		        ps.setString(25, masteritemtag.getPaperColor());
 		        ps.setString(26, masteritemtag.getQuantitySelectionAvailability());
-		        ps.setInt(27, masteritemtag.getQuantitySelectionRange());
+		        ps.setString(27, masteritemtag.getQuantitySelectionRange());
 		        ps.setString(28, masteritemtag.getPattern());
 		        ps.setString(29, masteritemtag.getPhotoAvailability());
+		        ps.setFloat(30, masteritemtag.getRate());
 
 	            try {
 	                ps.executeUpdate(); // データベースに挿入
@@ -562,8 +575,8 @@ private void getConnection() throws NamingException, SQLException{
 	                + "productnumber_asplus7sub, productnumber_asplus8sub, productnumber_asplus9sub, "
 	                + "productnumber_Color, qrcodeinformation, storagelocation, inventorymanagementclassification, "
 	                + "quantity, outline, paperColor, quantitySelectionAvailability, quantitySelectionRange, "
-	                + "pattern, photoAvailability) "
-	                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	                + "pattern, photoAvailability, rate) "
+	                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 	        // プリペアドステートメントのパラメータを設定
 	        ps.setString(1, masteritemtag.getIdentifier());
@@ -588,13 +601,14 @@ private void getConnection() throws NamingException, SQLException{
 	        ps.setString(20, masteritemtag.getQrcodeinformation());
 	        ps.setString(21, masteritemtag.getStoragelocation());
 	        ps.setString(22, masteritemtag.getInventorymanagementclassification());
-	        ps.setInt(23, masteritemtag.getQuantity());
+	        ps.setString(23, masteritemtag.getQuantity());
 	        ps.setString(24, masteritemtag.getOutline());
 	        ps.setString(25, masteritemtag.getPaperColor());
 	        ps.setString(26, masteritemtag.getQuantitySelectionAvailability());
-	        ps.setInt(27, masteritemtag.getQuantitySelectionRange());
+	        ps.setString(27, masteritemtag.getQuantitySelectionRange());
 	        ps.setString(28, masteritemtag.getPattern());
 	        ps.setString(29, masteritemtag.getPhotoAvailability());
+	        ps.setFloat(30, masteritemtag.getRate());
 
 	        // 挿入を実行
 	        ps.executeUpdate();
@@ -618,8 +632,10 @@ private void getConnection() throws NamingException, SQLException{
 	    return false;
 	
     }
+	
 	public void downloadAll() throws IOException {
 	    PrintWriter csvWriter = null;
+	    BufferedWriter bufferedWriter = null;
 
 	    try {
 	        // データベース接続の取得
@@ -637,7 +653,7 @@ private void getConnection() throws NamingException, SQLException{
             String fileName = "masteritemtaglist_DL " + currentDateAndTime + ".csv";
 
 	        // 適切なパスを選んでください
-	        String filePath = "E:\\Program Files/"+ fileName;
+            String filePath = "/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Download_Files/"+ fileName;
             
 	        //<!-- UM425QA-KIR915W -->
 	        //<!-- DESKTOP-KBUH9GC -->
@@ -648,50 +664,53 @@ private void getConnection() throws NamingException, SQLException{
             //<!-- Raspberry Pi(192.168.10.118 ) -->
 	        //<!-- String filePath = "/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Download_Files/"+ fileName; -->
 	        
-	        // CSV Writer の準備
-	        csvWriter = new PrintWriter(filePath, "Shift-JIS");
+	        // CSV Writer の準備（BufferedWriter + UTF-8）
+	        bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "Shift-JIS"), 8192); 
 
 	        // ヘッダー行
 	        csvWriter.append("識別種類,識別番号,仕入先,品名（Asplus）,品名強調カラー,品番（Asplus）,品番（Asplus）1,品番（Asplus）_強調1,"
 	        		+ "品番（Asplus）2,品番（Asplus）_強調2,品番（Asplus）3,品番（Asplus）_強調3,品番（Asplus）4,品番（Asplus）5,品番（Asplus）6,"
 	        		+ "品番（Asplus）7,品番（Asplus）8,品番（Asplus）9,品番カラー,QRCode情報,保管先,在庫管理区分,数量,白抜き,用紙色,"
-	        		+ "数量選択有無,数量選択幅,パターン,写真有無");
+	        		+ "数量選択有無,数量選択幅,パターン,写真有無,単価");
 	        csvWriter.append("\n");
+	        
+	        int rowCount = 0;
+	        StringBuilder sb = new StringBuilder();
 
-	        // データ行の書き出し
-	        while (rs.next()) {
-	            csvWriter.append(rs.getString("identifier") + ",");
-	            csvWriter.append(rs.getString("identificationnumber") + ",");
-	            csvWriter.append(rs.getString("vendor") + ",");
-	            csvWriter.append(rs.getString("productname_asplus") + ",");
-	            csvWriter.append(rs.getString("productname_emphasisColor") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplussub1") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus_emphasissub1") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus2sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus_emphasis2sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus3sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus_emphasis3sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus4sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus5sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus6sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus7sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus8sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_asplus9sub") + ",");
-	            csvWriter.append(rs.getString("productnumber_Color") + ",");
-	            csvWriter.append(rs.getString("qrcodeinformation") + ",");
-	            csvWriter.append(rs.getString("storagelocation") + ",");
-	            csvWriter.append(rs.getString("inventorymanagementclassification") + ",");
-	            csvWriter.append(String.valueOf(rs.getInt("quantity")) + ",");
-	            csvWriter.append(rs.getString("outline") + ",");
-	            csvWriter.append(rs.getString("paperColor") + ",");
-	            csvWriter.append(rs.getString("quantitySelectionAvailability") + ",");
-	            csvWriter.append(String.valueOf(rs.getInt("quantitySelectionRange")) + ",");
-	            csvWriter.append(rs.getString("pattern") + ",");
-	            csvWriter.append(rs.getString("photoAvailability"));
-	            csvWriter.append("\n");
-	        }
-
+	     // データ行の書き出し
+            while (rs.next()) {
+                csvWriter.append(safeGetString(rs, "identifier")).append(",")
+                         .append(safeGetString(rs, "identificationnumber")).append(",")
+                         .append(safeGetString(rs, "vendor")).append(",")
+                         .append(safeGetString(rs, "productname_asplus")).append(",")
+                         .append(safeGetString(rs, "productname_emphasisColor")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplussub1")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus_emphasissub1")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus2sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus_emphasis2sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus3sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus_emphasis3sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus4sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus5sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus6sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus7sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus8sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_asplus9sub")).append(",")
+                         .append(safeGetString(rs, "productnumber_Color")).append(",")
+                         .append(safeGetString(rs, "qrcodeinformation")).append(",")
+                         .append(safeGetString(rs, "storagelocation")).append(",")
+                         .append(safeGetString(rs, "inventorymanagementclassification")).append(",")
+                         .append(safeGetInt(rs, "quantity")).append(",")
+                         .append(safeGetString(rs, "outline")).append(",")
+                         .append(safeGetString(rs, "paperColor")).append(",")
+                         .append(safeGetString(rs, "quantitySelectionAvailability")).append(",")
+                         .append(safeGetInt(rs, "quantitySelectionRange")).append(",")
+                         .append(safeGetString(rs, "pattern")).append(",")
+                         .append(safeGetString(rs, "photoAvailability")).append(",")
+                         .append(safeGetInt(rs, "rate")).append("\n");
+            }
+            
 	        // ファイルへの書き込み
 	        csvWriter.flush();
 	    } catch (SQLException e) {
@@ -711,7 +730,24 @@ private void getConnection() throws NamingException, SQLException{
 	            e.printStackTrace();
 	        }
 	    }
+	    
 	 }
+	
+	// 安全にStringを取得する共通メソッド
+    private String safeGetString(ResultSet rs, String columnName) throws SQLException {
+        String value = rs.getString(columnName);
+        return (value != null && !value.equals("-")) ? value : "-";
+    }
+
+    // 安全に数値を取得する共通メソッド
+    private String safeGetInt(ResultSet rs, String columnName) throws SQLException {
+        try {
+            int value = rs.getInt(columnName);
+            return String.valueOf(value);
+        } catch (SQLException e) {
+            return "-";
+        }
+    }
 	
 	public Masteritemtag qrCreate(int id) {
 		Masteritemtag masteritemtag = null;
@@ -743,21 +779,22 @@ private void getConnection() throws NamingException, SQLException{
 	            String qrcodeinformation = rs.getString("qrcodeinformation");
 	            String storagelocation = rs.getString("storagelocation");
 	            String inventorymanagementclassification = rs.getString("inventorymanagementclassification");
-	            int quantity = rs.getInt("quantity");
+	            String quantity = rs.getString("quantity");
 	            String outline = rs.getString("outline");
 	            String paperColor = rs.getString("paperColor");
 	            String quantitySelectionAvailability = rs.getString("quantitySelectionAvailability");
-	            int quantitySelectionRange = rs.getInt("quantitySelectionRange");
+	            String quantitySelectionRange = rs.getString("quantitySelectionRange");
 	            String storageLocation = rs.getString("storageLocation");
 	            String pattern = rs.getString("pattern");
 	            String photoAvailability = rs.getString("photoAvailability");
+	            float rate = rs.getFloat("rate");
 
 	            masteritemtag = new Masteritemtag(id,identifier, identificationnumber, vendor, productname_asplus, productnumber_asplus, productname_emphasisColor, 
 	       	         productnumber_asplussub1, productnumber_asplus_emphasissub1, productnumber_asplus2sub, productnumber_asplus_emphasis2sub, 
 	    	         productnumber_asplus3sub, productnumber_asplus_emphasis3sub, productnumber_asplus4sub, productnumber_asplus5sub, 
 	    	         productnumber_asplus6sub, productnumber_asplus7sub, productnumber_asplus8sub, productnumber_asplus9sub, productnumber_Color, 
 	    	         qrcodeinformation, storagelocation, inventorymanagementclassification, quantity, outline, paperColor, 
-	    	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability);
+	    	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability,rate);
 	        }
         } catch (SQLException e) {
             e.printStackTrace();

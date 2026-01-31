@@ -14,6 +14,7 @@
 	String productnumber_correction=masterinventory == null ? "":masterinventory.getProductnumber_correction();
 	String qrcodeinformation=masterinventory == null ? "":masterinventory.getQrcodeinformation();
 	String storagelocation=masterinventory == null ? "":masterinventory.getStoragelocation();
+	String rate = masterinventory == null ? "" : String.valueOf(masterinventory.getRate());
 	String inventorymanagementclassification=masterinventory == null ? "":masterinventory.getInventorymanagementclassification();
 	
 	String id=masterinventory==null ? "":String.valueOf(masterinventory.getId());
@@ -96,7 +97,8 @@
                 <th>品番（Correction)</th>
                 <th>保管先</th>
                 <th>在庫管理区分</th>
-                 <th>QRCode情報</th>
+                <th>QRCode情報</th>
+                <th>単価</th>
                 <th></th>
             </tr>
         </thead>
@@ -111,6 +113,7 @@
                     <td><%= m.getStoragelocation() %></td>
                     <td><%= m.getInventorymanagementclassification() %></td>
                     <td><%= m.getQrcodeinformation() %></td>
+                    <td><%= m.getRate() %></td>
                     <td class="text-right"> <!-- 右寄せのセル -->
                     <!-- loginUser分岐処理 -->
                     <a href="<%= request.getContextPath() %>/MasterinventoryQRcode?action=qrcode&id=<%= String.valueOf(m.getId()) %>" class="btn btn-success">QRcode</a>
@@ -135,7 +138,7 @@
                     <input type="file" id="csvFile" name="csvFile" class="form-control-file" style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" multiple>
                 </div>
                 <button type="submit" class="btn btn-success" style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" name="action" value="import">ｲﾝﾎﾟｰﾄ</button>
-                <button type="submit" class="btn btn-danger" style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" name="action" value="download">ﾀﾞｳﾝﾛｰﾄﾞ</button>
+                <!-- <button type="submit" class="btn btn-danger" style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" name="action" value="download">ﾀﾞｳﾝﾛｰﾄﾞ</button> -->
             </form>
         </div>
     </ul>

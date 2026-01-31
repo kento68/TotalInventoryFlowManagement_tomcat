@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.google.zxing.BarcodeFormat;
@@ -39,49 +40,67 @@ public class MasteritemtagQRcode extends HttpServlet {
     private static final long serialVersionUID = 1L;
 	private BufferedImage img;
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	MasteritemtagDAO dao = new MasteritemtagDAO();
-        String action = request.getParameter("action");
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	    MasteritemtagDAO dao = new MasteritemtagDAO();
+	    String action = request.getParameter("action");
 
-        HttpSession session = request.getSession();
-        User loginUser = (User) session.getAttribute("loginUser");
+	    HttpSession session = request.getSession();
+	    User loginUser = (User) session.getAttribute("loginUser");
 
-        if (action != null && action.equals("qrcode")) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            Masteritemtag ｍasteritemtag = dao.qrCreate(id);
-            if (ｍasteritemtag != null) {
-                createLabelImage(response, ｍasteritemtag);
-      
-                // 印刷するかどうかの確認ダイアログを表示
-                int printResponse = JOptionPane.showConfirmDialog(
-                        null,
-                        "印刷しますか？",
-                        "印刷確認",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE
-                );
+	    try {
+	        if (action != null && action.equals("qrcode")) {
+	            int id = Integer.parseInt(request.getParameter("id"));
+	            Masteritemtag masteritemtag = dao.qrCreate(id); // QRコードを生成
+	            if (masteritemtag != null) {
+	                createLabelImage(response, masteritemtag); // ラベル画像を生成
+	                
+	                // JFrameを作成
+	                JFrame jf = new JFrame();
+	                jf.setAlwaysOnTop(true);
+	                jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	                jf.setUndecorated(true); // ウィンドウの装飾を削除する場合
+	                jf.setSize(0, 0); // サイズをゼロにして非表示にする
+	                jf.setLocationRelativeTo(null); // 画面の中央に配置
+	                
+	                // 印刷するかどうかの確認ダイアログを表示
+	                int printResponse = JOptionPane.showConfirmDialog(
+	                        null,
+	                        "印刷しますか？",
+	                        "印刷確認",
+	                        JOptionPane.YES_NO_OPTION,
+	                        JOptionPane.QUESTION_MESSAGE
+	                );
 
-                // ユーザーが印刷を選択した場合の処理
-                if (printResponse == JOptionPane.YES_OPTION) {
-                    printDocument();
-                } else {
-                    System.out.println("印刷はキャンセルされました。");
-                }
+	                // ユーザーが印刷を選択した場合の処理
+	                if (printResponse == JOptionPane.YES_OPTION) {
+	                    printDocument(); // 印刷処理を実行
+	                } else {
+	                    System.out.println("印刷はキャンセルされました。");
+	                }
+	                
+	                // JFrameを閉じる
+	                jf.dispose();
+	                return; // 処理を終了
+	            } else {
+	                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Item not found"); // エラーハンドリング
+	                return;
+	            }
+	        }
 
-                return;
-            } else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory not found");
-                return;
-            }
-        }
+	        List<Masteritemtag> list = dao.findAll(); // すべてのアイテムを取得
+	        request.setAttribute("list", list); // リストをリクエストに設定
 
-        List<Masteritemtag> list = dao.findAll();
-        request.setAttribute("list", list);
+	    } catch (Exception e) {
+	        // エラー発生時の処理
+	        e.printStackTrace(); // エラーログを出力（デバッグ用）
+	        request.setAttribute("err", "登録データに不備があります。「更新」ボタンを押して、登録し直してください"); // エラーメッセージを設定
+	        request.setAttribute("list", dao.findAll()); // エラー時にアイテムリストを取得
+	    }
 
-        RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/masteritemtaglist.jsp");
-        rd.forward(request, response);
-    }
-
+	    RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/masteritemtaglist.jsp");
+	    rd.forward(request, response); // JSPにフォワード
+	}
+	
     private String createLabelImage(HttpServletResponse response, Masteritemtag masteritemtag) throws IOException {
     	
         int pattern = Integer.parseInt(masteritemtag.getPattern());
@@ -92,15 +111,15 @@ public class MasteritemtagQRcode extends HttpServlet {
 
         BufferedImage bufferedImage = ImageIO.read(new File("/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Export_Files/Picture/MasterItemtag/Format Pattern/" + FormatPattern));
     	 
-        //<!-- UM425QA-KIR915W -->
-        //<!-- DESKTOP-KBUH9GC -->
-	    //<!-- BufferedImage bufferedImage = ImageIO.read(new File("E:\\Program Files/eclipse/workspace/totalInventoryFlowManagement/Picture/MasterItemtag/Format Pattern/" + FormatPattern)); -->
+	        //<!-- UM425QA-KIR915W -->
+	        //<!-- DESKTOP-KBUH9GC -->
+    	    //<!-- BufferedImage bufferedImage = ImageIO.read(new File("E:\\Program Files/eclipse/workspace/totalInventoryFlowManagement/Picture/MasterItemtag/Format Pattern/" + FormatPattern)); -->
 
-  		//<!-- Raspberry Pi(192.168.10.103 ) -->
-	    //<!-- Raspberry Pi(192.168.10.122 ) -->
-  		//<!-- Raspberry Pi(192.168.10.118 ) -->
-	    //<!--BufferedImage bufferedImage = ImageIO.read(new File("/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Export_Files/Picture/MasterItemtag/Format Pattern/" + FormatPattern)); -->
-        
+      		//<!-- Raspberry Pi(192.168.10.103 ) -->
+    	    //<!-- Raspberry Pi(192.168.10.122 ) -->
+      		//<!-- Raspberry Pi(192.168.10.118 ) -->
+    	    //<!--BufferedImage bufferedImage = ImageIO.read(new File("/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Export_Files/Picture/MasterItemtag/Format Pattern/" + FormatPattern)); -->
+
     	 Graphics2D g2d = bufferedImage.createGraphics();
     	 Graphics2D g3d = bufferedImage.createGraphics();
     	 
@@ -131,9 +150,9 @@ public class MasteritemtagQRcode extends HttpServlet {
             if (productNumber1 != null) {
             	// 特定のフィールドのフォントサイズを変更
                 if ((productNumber1.equals(masteritemtag.getProductnumber_Color())))
-                    g3d.setFont(new Font("Serif", Font.BOLD, 45));  // サイズを大きくする
+                    g3d.setFont(new Font("Serif", Font.BOLD, 40));  // サイズを大きくする
                 } else {
-                    g3d.setFont(new Font("Serif", Font.BOLD, 30));  // 通常サイズに戻す
+                    g3d.setFont(new Font("Serif", Font.BOLD, 25));  // 通常サイズに戻す
                 }
 
             	g3d.drawString(productNumber1, xPosition1, yPosition1);
@@ -176,9 +195,9 @@ public class MasteritemtagQRcode extends HttpServlet {
                      productNumber2.equals(productname_emphasisColor)) && 
                     (productname_emphasisColor != null && !productname_emphasisColor.equals("-"))) 
                 {
-                    g3d.setFont(new Font("Serif", Font.BOLD, 45));  // サイズを大きくする
+                    g3d.setFont(new Font("Serif", Font.BOLD, 40));  // サイズを大きくする
                 } else {
-                    g3d.setFont(new Font("Serif", Font.BOLD, 30));  // 通常サイズに戻す
+                    g3d.setFont(new Font("Serif", Font.BOLD, 25));  // 通常サイズに戻す
                 }
 
                 g3d.drawString(productNumber2, xPosition2, yPosition2);
@@ -193,7 +212,7 @@ public class MasteritemtagQRcode extends HttpServlet {
    	 		g2d.setColor(Color.BLACK);
    	 		g2d.drawString(masteritemtag.getStoragelocation(), 110, 373);
    	        //数量
-   	        int quantity = masteritemtag.getQuantity();
+   	 		String quantity = masteritemtag.getQuantity();
    	        g3d.setColor(Color.BLACK);
    	        g3d.drawString(String.valueOf(quantity), 140, 255);
    	        

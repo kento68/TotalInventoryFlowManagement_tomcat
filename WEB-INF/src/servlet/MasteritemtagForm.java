@@ -75,6 +75,7 @@ public class MasteritemtagForm extends HttpServlet {
         String storageLocation = request.getParameter("storageLocation");
         String pattern = request.getParameter("pattern");
         String photoAvailability = request.getParameter("photoAvailability");
+        String rate=request.getParameter("rate");
 	
 		if(storagelocation.isEmpty() || qrcodeinformation.isEmpty()){
 			request.setAttribute("err","未記入の項目があります！");
@@ -86,16 +87,16 @@ public class MasteritemtagForm extends HttpServlet {
 			   	         productnumber_asplussub1, productnumber_asplus_emphasissub1, productnumber_asplus2sub, productnumber_asplus_emphasis2sub, 
 				         productnumber_asplus3sub, productnumber_asplus_emphasis3sub, productnumber_asplus4sub, productnumber_asplus5sub, 
 				         productnumber_asplus6sub, productnumber_asplus7sub, productnumber_asplus8sub, productnumber_asplus9sub, productnumber_Color, 
-				         qrcodeinformation, storagelocation, inventorymanagementclassification,Integer.parseInt(quantity), outline, paperColor, 
-				         quantitySelectionAvailability, Integer.parseInt(quantitySelectionRange), pattern, photoAvailability));
+				         qrcodeinformation, storagelocation, inventorymanagementclassification,quantity, outline, paperColor, 
+				         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability,Float.parseFloat(rate)));
 				request.setAttribute("msg","1件更新しました。");
 			}else{
 				dao.insertOne(new Masteritemtag(identifier, identificationnumber, vendor, productname_asplus, productnumber_asplus, productname_emphasisColor, 
 			   	         productnumber_asplussub1, productnumber_asplus_emphasissub1, productnumber_asplus2sub, productnumber_asplus_emphasis2sub, 
 				         productnumber_asplus3sub, productnumber_asplus_emphasis3sub, productnumber_asplus4sub, productnumber_asplus5sub, 
 				         productnumber_asplus6sub, productnumber_asplus7sub, productnumber_asplus8sub, productnumber_asplus9sub, productnumber_Color, 
-				         qrcodeinformation, storagelocation, inventorymanagementclassification,Integer.parseInt(quantity), outline, paperColor, 
-				         quantitySelectionAvailability, Integer.parseInt(quantitySelectionRange), pattern, photoAvailability));
+				         qrcodeinformation, storagelocation, inventorymanagementclassification,quantity, outline, paperColor, 
+				         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability,Float.parseFloat(rate)));
 				request.setAttribute("msg","1件登録しました。");
 			}
 		}

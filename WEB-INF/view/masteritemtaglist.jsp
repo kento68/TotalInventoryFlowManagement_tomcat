@@ -27,13 +27,14 @@
     String qrcodeinformation = masteritemtag == null ? "" : masteritemtag.getQrcodeinformation();
     String storagelocation = masteritemtag == null ? "" : masteritemtag.getStoragelocation();
     String inventorymanagementclassification = masteritemtag == null ? "" : masteritemtag.getInventorymanagementclassification();
-    String quantity = masteritemtag == null ? "" : String.valueOf(masteritemtag.getQuantity());
+    String quantity = masteritemtag == null ? "" : masteritemtag.getQuantity();
     String outline = masteritemtag == null ? "" : masteritemtag.getOutline();
     String paperColor = masteritemtag == null ? "" : masteritemtag.getPaperColor();
     String quantitySelectionAvailability = masteritemtag == null ? "" : masteritemtag.getQuantitySelectionAvailability();
-    String quantitySelectionRange = masteritemtag == null ? "" : String.valueOf(masteritemtag.getQuantitySelectionRange());
+    String quantitySelectionRange = masteritemtag == null ? "" : masteritemtag.getQuantitySelectionRange();
     String pattern = masteritemtag == null ? "" : masteritemtag.getPattern();
     String photoAvailability = masteritemtag == null ? "" : masteritemtag.getPhotoAvailability();
+    String rate = masteritemtag == null ? "" : String.valueOf(masteritemtag.getRate());
 	
 	String id=masteritemtag==null ? "":String.valueOf(masteritemtag.getId());
 	
@@ -115,6 +116,7 @@
                 <th>保管先</th>
                 <th>在庫管理区分</th>
                 <th>QRCode情報</th>
+                <th>単価</th>
                 
                 <th></th>
             </tr>
@@ -130,6 +132,7 @@
                     <td><%= m.getStoragelocation() %></td>
                     <td><%= m.getInventorymanagementclassification() %></td>
                     <td><%= m.getQrcodeinformation() %></td>
+                    <td><%= m.getRate() %></td>
 
                     <td class="text-right"> <!-- 右寄せのセル -->
                         <!-- loginUser分岐処理 -->
@@ -155,7 +158,7 @@
                     <input type="file" id="csvFile" name="csvFile" class="form-control-file" style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" multiple>
                 </div>
                 <button type="submit" class="btn btn-success" style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" name="action" value="import">ｲﾝﾎﾟｰﾄ</button>
-                <button type="submit" class="btn btn-danger" style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" name="action" value="download">ﾀﾞｳﾝﾛｰﾄﾞ</button>
+                <!-- <button type="submit" class="btn btn-danger" style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" name="action" value="download">ﾀﾞｳﾝﾛｰﾄﾞ</button> -->
             </form>
         </div>
     </ul>

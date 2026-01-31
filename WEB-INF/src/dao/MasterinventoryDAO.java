@@ -1,8 +1,11 @@
 package dao;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -63,10 +66,11 @@ private void getConnection() throws NamingException, SQLException{
 				String qrcodeinformation=rs.getString("qrcodeinformation");
 				String storagelocation=rs.getString("storagelocation");
 				String inventorymanagementclassification=rs.getString("inventorymanagementclassification");
+				float rate=rs.getFloat("rate");
 
 				Masterinventory masterinventory=new Masterinventory(id,identifier,identificationnumber,vendor,productname_asplus,
 						productnumber_asplus,productname_correction,productnumber_correction,qrcodeinformation,
-						storagelocation,inventorymanagementclassification);
+						storagelocation,inventorymanagementclassification,rate);
 				
 				masterinventoryList.add(masterinventory);
 			}
@@ -87,7 +91,7 @@ private void getConnection() throws NamingException, SQLException{
 	        ps = db.prepareStatement("SELECT COUNT(*) FROM masterinventorys WHERE identifier = ? AND identificationnumber = ? "
 	                + "AND vendor = ? AND productname_asplus = ? AND productnumber_asplus = ? "
 	                + "AND productname_correction = ? AND productnumber_correction = ? "
-	                + "AND qrcodeinformation = ? AND storagelocation = ? AND inventorymanagementclassification = ?");
+	                + "AND qrcodeinformation = ? AND storagelocation = ? AND inventorymanagementclassification = ? AND rate = ?");
 	        ps.setString(1, masterinventory.getIdentifier());
 	        ps.setString(2, masterinventory.getIdentificationnumber());
 	        ps.setString(3, masterinventory.getVendor());
@@ -98,6 +102,7 @@ private void getConnection() throws NamingException, SQLException{
 	        ps.setString(8, masterinventory.getQrcodeinformation());
 	        ps.setString(9, masterinventory.getStoragelocation());
 	        ps.setString(10, masterinventory.getInventorymanagementclassification());
+	        ps.setFloat(11, masterinventory.getRate());
 	        
 	        ResultSet rs = ps.executeQuery();
 	        if (rs.next() && rs.getInt(1) > 0) {
@@ -109,8 +114,8 @@ private void getConnection() throws NamingException, SQLException{
 	        // データの挿入
 	        ps = db.prepareStatement("INSERT INTO masterinventorys(identifier,identificationnumber,vendor,"
 	                + "productname_asplus,productnumber_asplus,productname_correction,productnumber_correction,"
-	                + "qrcodeinformation,storagelocation,inventorymanagementclassification) "
-	                + "VALUES(?,?,?,?,?,?,?,?,?,?)");
+	                + "qrcodeinformation,storagelocation,inventorymanagementclassification,rate) "
+	                + "VALUES(?,?,?,?,?,?,?,?,?,?,?)");
 
 	        ps.setString(1, masterinventory.getIdentifier());
 	        ps.setString(2, masterinventory.getIdentificationnumber());
@@ -122,6 +127,7 @@ private void getConnection() throws NamingException, SQLException{
 	        ps.setString(8, masterinventory.getQrcodeinformation());
 	        ps.setString(9, masterinventory.getStoragelocation());
 	        ps.setString(10, masterinventory.getInventorymanagementclassification());
+	        ps.setFloat(11, masterinventory.getRate());
 
 	        int result = ps.executeUpdate();
 
@@ -157,10 +163,11 @@ private void getConnection() throws NamingException, SQLException{
 				String qrcodeinformation=rs.getString("qrcodeinformation");
 				String storagelocation=rs.getString("storagelocation");
 				String inventorymanagementclassification=rs.getString("inventorymanagementclassification");
+				float rate=rs.getFloat("rate");
 				
 				masterinventory=new Masterinventory(id,identifier,identificationnumber,vendor,productname_asplus,
 						productnumber_asplus,productname_correction,productnumber_correction,qrcodeinformation,
-						storagelocation,inventorymanagementclassification);
+						storagelocation,inventorymanagementclassification,rate);
 			}
 		}catch (SQLException e) {
 			e.printStackTrace();
@@ -176,7 +183,7 @@ private void getConnection() throws NamingException, SQLException{
 			this.getConnection();
 			ps=db.prepareStatement("UPDATE masterinventorys SET identifier=?,identificationnumber=?,vendor=?,"
 					+ "productname_asplus=?,productnumber_asplus=?,productname_correction=?,productnumber_correction=?,"
-					+ "qrcodeinformation=?,storagelocation=?,inventorymanagementclassification=?"
+					+ "qrcodeinformation=?,storagelocation=?,inventorymanagementclassification=?,rate=? "
 			        + "WHERE id=?");
 			
 			ps.setString(1, masterinventory.getIdentifier());
@@ -189,8 +196,9 @@ private void getConnection() throws NamingException, SQLException{
 			ps.setString(8, masterinventory.getQrcodeinformation());
 			ps.setString(9, masterinventory.getStoragelocation());
 			ps.setString(10, masterinventory.getInventorymanagementclassification());
+			ps.setFloat(11, masterinventory.getRate());
 
-			ps.setInt(11, masterinventory.getId());
+			ps.setInt(12, masterinventory.getId());
 			int result=ps.executeUpdate();
 			if(result != 1){
 				return false;
@@ -230,7 +238,7 @@ private void getConnection() throws NamingException, SQLException{
 	        ps = db.prepareStatement("SELECT * FROM masterinventorys WHERE "
 	        		+ "identifier LIKE ? OR vendor LIKE ? OR productname_asplus LIKE ? OR identificationnumber LIKE ? OR "
 	        		+ "productnumber_asplus LIKE ? OR productname_correction LIKE ? OR productnumber_correction LIKE ? OR "
-	        		+ "qrcodeinformation LIKE ? OR storagelocation LIKE ? OR inventorymanagementclassification LIKE ?");
+	        		+ "qrcodeinformation LIKE ? OR storagelocation LIKE ? OR inventorymanagementclassification LIKE ? OR rate LIKE ?");
 
 	        String searchPattern = "%" + search + "%";
 	        
@@ -244,6 +252,7 @@ private void getConnection() throws NamingException, SQLException{
 	        ps.setString(8, searchPattern); // qrcodeinformation LIKE ?
 	        ps.setString(9, searchPattern); // storagelocation LIKE ?
 	        ps.setString(10, searchPattern); // inventorymanagementclassification LIKE ?
+	        ps.setString(11, searchPattern); // rate ?
 	        
 	        rs = ps.executeQuery();
 	        while (rs.next()) {
@@ -258,11 +267,12 @@ private void getConnection() throws NamingException, SQLException{
 	            String qrcodeinformation = rs.getString("qrcodeinformation");
 	            String storagelocation = rs.getString("storagelocation");
 	            String inventorymanagementclassification = rs.getString("inventorymanagementclassification");
+	            float rate=rs.getFloat("rate");
 
 	            // Create Masterinventory object with retrieved values
 				Masterinventory masterinventory=new Masterinventory(id,identifier,identificationnumber,vendor,productname_asplus,
 						productnumber_asplus,productname_correction,productnumber_correction,qrcodeinformation,
-						storagelocation,inventorymanagementclassification);
+						storagelocation,inventorymanagementclassification,rate);
 				
 				masterinventoryList.add(masterinventory);
 	        }
@@ -287,7 +297,8 @@ private void getConnection() throws NamingException, SQLException{
 
 	                String[] columns = line.split(",", -1);
 
-	                if (columns.length == 10) {
+	                if (columns.length == 11) {
+	                	float column10 = Float.parseFloat(columns[10]);
 	                    Masterinventory masterinventory = new Masterinventory(
 	                        columns[0],
 	                        columns[1],
@@ -298,7 +309,8 @@ private void getConnection() throws NamingException, SQLException{
 	                        columns[6],
 	                        columns[7],
 	                        columns[8],
-	                        columns[9]
+	                        columns[9],
+	                        column10 // 変換後の int を使用
 	                    );
 	                    masterinventoryList.add(masterinventory);
 	                } else {
@@ -318,8 +330,8 @@ private void getConnection() throws NamingException, SQLException{
 	        // 挿入用の準備
 	        PreparedStatement ps = db.prepareStatement("INSERT INTO masterinventorys(identifier, identificationnumber, vendor, "
 	                + "productname_asplus, productnumber_asplus, productname_correction, productnumber_correction, "
-	                + "qrcodeinformation, storagelocation, inventorymanagementclassification) "
-	                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	                + "qrcodeinformation, storagelocation, inventorymanagementclassification,rate) "
+	                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 	        for (Masterinventory masterinventory : masterinventoryList) {
 	            // プリペアドステートメントのパラメータを設定
@@ -333,6 +345,7 @@ private void getConnection() throws NamingException, SQLException{
 	            ps.setString(8, masterinventory.getQrcodeinformation());
 	            ps.setString(9, masterinventory.getStoragelocation());
 	            ps.setString(10, masterinventory.getInventorymanagementclassification());
+	            ps.setFloat(11, masterinventory.getRate());
 
 	            try {
 	                ps.executeUpdate(); // データベースに挿入
@@ -373,8 +386,8 @@ private void getConnection() throws NamingException, SQLException{
 	            // 挿入用の準備
 	            PreparedStatement ps = db.prepareStatement("INSERT INTO masterinventorys(identifier, identificationnumber, vendor, "
 	                    + "productname_asplus, productnumber_asplus, productname_correction, productnumber_correction, "
-	                    + "qrcodeinformation, storagelocation, inventorymanagementclassification) "
-	                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	                    + "qrcodeinformation, storagelocation, inventorymanagementclassification,rate) "
+	                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 	            // プリペアドステートメントのパラメータを設定
 	            ps.setString(1, masterinventory.getIdentifier());
@@ -387,6 +400,7 @@ private void getConnection() throws NamingException, SQLException{
 	            ps.setString(8, masterinventory.getQrcodeinformation());
 	            ps.setString(9, masterinventory.getStoragelocation());
 	            ps.setString(10, masterinventory.getInventorymanagementclassification());
+	            ps.setFloat(11, masterinventory.getRate());
 
 	            // 挿入を実行
 	            ps.executeUpdate();
@@ -407,8 +421,10 @@ private void getConnection() throws NamingException, SQLException{
 	    return false;
 	
     }
+	
 	public void downloadAll() throws IOException {
 	    PrintWriter csvWriter = null;
+	    BufferedWriter bufferedWriter = null;
 
 	    try {
 	        // データベース接続の取得
@@ -426,7 +442,7 @@ private void getConnection() throws NamingException, SQLException{
             String fileName = "masterinventorylist_DL " + currentDateAndTime + ".csv";
 
 	        // 適切なパスを選んでください
-	        String filePath = "E:\\Program Files/"+ fileName;
+            String filePath =  "/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Download_Files/"+ fileName;
             
 	        //<!-- UM425QA-KIR915W -->
 	        //<!-- DESKTOP-KBUH9GC -->
@@ -437,13 +453,16 @@ private void getConnection() throws NamingException, SQLException{
             //<!-- Raspberry Pi(192.168.10.118 ) -->
 	        //<!-- String filePath =  "/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Download_Files/"+ fileName; -->
 	        
-	        // CSV Writer の準備
-	        csvWriter = new PrintWriter(filePath, "Shift-JIS");
+	        // CSV Writer の準備（BufferedWriter + Shift-JIS）
+	        bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "Shift-JIS"), 8192); 
 
 	        // ヘッダー行
-	        csvWriter.append("識別種類,識別番号,仕入先,品名（Asplus）,品番（Asplus）,品名（Correction）,品番（Correction）,QRCode情報,保管先,在庫管理区分");
+	        csvWriter.append("識別種類,識別番号,仕入先,品名（Asplus）,品番（Asplus）,品名（Correction）,品番（Correction）,QRCode情報,保管先,在庫管理区分,単価");
 	        csvWriter.append("\n");
 
+	        int rowCount = 0;
+	        StringBuilder sb = new StringBuilder();
+	        
 	        // データ行の書き出し
 	        while (rs.next()) {
 	            csvWriter.append(rs.getString("identifier") + ",");
@@ -455,10 +474,19 @@ private void getConnection() throws NamingException, SQLException{
 	            csvWriter.append(rs.getString("productnumber_correction") + ",");
 	            csvWriter.append(rs.getString("qrcodeinformation") + ",");
 	            csvWriter.append(rs.getString("storagelocation") + ",");
-	            csvWriter.append(rs.getString("inventorymanagementclassification"));
+	            csvWriter.append(rs.getString("inventorymanagementclassification") + ",");
+	            csvWriter.append(rs.getString("rate"));
 	            csvWriter.append("\n");
+	            
+	            bufferedWriter.write(sb.toString());
+
+	            rowCount++;
+	            if (rowCount % 100 == 0) { // 100行ごとに flush
+	                bufferedWriter.flush();
+	            }
 	        }
 
+	        bufferedWriter.flush(); // 最後にflush
 	        // ファイルへの書き込み
 	        csvWriter.flush();
 	    } catch (SQLException e) {
@@ -498,10 +526,11 @@ private void getConnection() throws NamingException, SQLException{
                 String qrcodeinformation = rs.getString("qrcodeinformation");
                 String storagelocation = rs.getString("storagelocation");
                 String inventorymanagementclassification = rs.getString("inventorymanagementclassification");
+                float rate = rs.getFloat("rate");
 
                 masterinventory = new Masterinventory(id, identifier, identificationnumber, vendor, productname_asplus,
                         productnumber_asplus, productname_correction, productnumber_correction, qrcodeinformation,
-                        storagelocation, inventorymanagementclassification);
+                        storagelocation, inventorymanagementclassification,rate);
             }
         } catch (SQLException e) {
             e.printStackTrace();

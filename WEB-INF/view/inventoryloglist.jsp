@@ -93,11 +93,24 @@
   </div>
 </form>
 
+<div class="d-flex align-items-center gap-2">
+  <label for="startIndex" class="me-2">ﾀﾞｳﾝﾛｰﾄﾞ開始位置:</label>
+  <input type="number" id="startIndex" name="startIndex" class="form-control" min="0" required oninput="checkRange()" style="width: 100px;">
+
+  <span class="mx-2">～</span>
+
+  <label for="endIndex" class="me-2">ﾀﾞｳﾝﾛｰﾄﾞ終了位置:</label>
+  <input type="number" id="endIndex" name="endIndex" class="form-control" min="0" required oninput="checkRange()" style="width: 100px;">
+</div>
+
+<form id="myForm" action="<%= request.getContextPath() %>/InventoryLogList" method="POST" enctype="multipart/form-data" class="form-inline">
+
 <%-- テーブル --%>
 <% if (list != null && list.size() > 0) { %>
     <table class="table table-striped" style="margin-top: 0px;">
         <thead>
             <tr>
+                <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"> 全選択</th>
                 <th>記録日時</th>
                 <th>記録時間</th>
                 <th>取込日付</th>
@@ -120,8 +133,12 @@
             </tr>
         </thead>
         <tbody>
+        	<% int rowIndex = 0; %>
             <% for (InventoryLog l : list) { %>
-                <tr>
+                <tr data-index="<%= rowIndex %>">
+                	<td>
+                        <input type="checkbox" name="selectedIds" value="<%= l.getId() %>" class="rowCheckbox">
+                    </td>
                     <td><%= l.getRecorddate() %></td>
                     <td><%= l.getRecordtime() %></td>
                     <td><%= l.getImportdate() %></td>
@@ -142,12 +159,13 @@
                     <td><%= l.getStoragelocation() %></td>
                     <td><%= l.getIdentificationnumber() %></td>
                     <td class="text-right"> <!-- 右寄せのセル -->
-                    <!-- loginUser分岐処理 -->
-                    <% if (loginUser != null) { %>
-                        <a href="<%= request.getContextPath() %>/InventoryLogList?action=delete&id=<%= String.valueOf(l.getId()) %>" class="btn btn-danger" onclick="return confirm('削除してよろしいですか？');">削除</a>
-                    <% } %>
+                    	<!-- loginUser分岐処理 -->
+                    	<% if (loginUser != null) { %>
+                        	<a href="<%= request.getContextPath() %>/InventoryLogList?action=delete&id=<%= String.valueOf(l.getId()) %>" class="btn btn-danger" onclick="return confirm('削除してよろしいですか？');">削除</a>
+                        <% } %>
                     </td>
                 </tr>
+            <% rowIndex++; %>
             <% } %>
         </tbody>
     </table>
@@ -158,7 +176,16 @@
         <li><a href="<%= request.getContextPath() %>/Logout">Logout</a></li>
         <div>
             <form action="<%= request.getContextPath() %>/InventoryLogList" method="POST" enctype="multipart/form-data" class="form-inline">
-                <button type="submit" class="btn btn-danger" style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" name="action" value="download">ﾀﾞｳﾝﾛｰﾄﾞ</button>
+            	<button type="submit" class="btn btn-warning mr-2" name="action" value="downloadSelected" 
+            		style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" 
+            		onclick="return confirm('選択した項目をﾀﾞｳﾝﾛｰﾄﾞしてよろしいですか？');">
+            		ﾀﾞｳﾝﾛｰﾄﾞ
+            	</button>
+            	<button type="submit" class="btn btn-danger mr-2" name="action" value="deleteSelected"
+            		style="margin-right: 5px; margin-bottom: 5px; padding-top: 1px; padding-bottom: 1px;" 
+            		onclick="return confirm('選択した項目を削除してよろしいですか？');">
+					削除
+				</button>
             </form>
         </div>
     </ul>
@@ -185,5 +212,24 @@ for(let i=0;i<forms.length;i++){
     sessionStorage.removeItem('reloaded');
   }
 
+//チェックボックスの全選択/全解除用
+  function toggleSelectAll(source) {
+    const checkboxes = document.getElementsByName('selectedIds');
+    for (let i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].checked = source.checked;
+    }
+  }
+
+//チェックボックスの任意選択
+function checkRange() {
+    let start = parseInt(document.getElementById("startIndex").value) || 0;
+    let end = parseInt(document.getElementById("endIndex").value) || 0;
+
+    document.querySelectorAll(".rowCheckbox").forEach(checkbox => {
+        let rowIndex = parseInt(checkbox.closest("tr").dataset.index);
+        checkbox.checked = (rowIndex >= start && rowIndex <= end);
+    });
+}
+  
 </script>
 </body>

@@ -18,6 +18,7 @@
     String decision = inventorymanagementinquiry == null ? "" : String.valueOf(inventorymanagementinquiry.getDecision());
     String remarks = inventorymanagementinquiry == null ? "" : inventorymanagementinquiry.getRemarks();
     String fileattributes = inventorymanagementinquiry == null ? "" : inventorymanagementinquiry.getFileattributes();
+    String rate = inventorymanagementinquiry == null ? "" : String.valueOf(inventorymanagementinquiry.getRate());
 
     String id = inventorymanagementinquiry == null ? "" : String.valueOf(inventorymanagementinquiry.getId());
 	
@@ -142,6 +143,13 @@
   <div class="form-group col-sm-6">
     <label for="fileattributes" class="required-label" id="fileattributes_label"><b>ファイル属性:</b></label>
     <input type="text" class="form-control" id="fileattributes" name="fileattributes" value="<%=fileattributes%>" placeholder="ファイル属性を入力してください" required>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group col-sm-6">
+    <label for="rate" class="required-label" id="rate_label"><b>単価:</b></label>
+    <input type="float" class="form-control" id="rate" name="rate" value="<%=rate%>" placeholder="単価を入力してください" >
   </div>
 </div>
 

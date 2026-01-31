@@ -1,7 +1,10 @@
 package servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -58,22 +61,6 @@ public class InventoryLogList extends HttpServlet {
                 dao.deleteOne(Integer.parseInt(request.getParameter("id")));
                 request.setAttribute("msg", "1件削除しました。");
             }
-
-            // ダウンロード処理の追加
-            if ("download".equals(action)) {
-                synchronized (this) { // 同期化してリクエストを1回だけ処理する
-                    if (session.getAttribute("downloadProcessed") == null) {
-                        try {
-                            dao.downloadAll();
-                            session.setAttribute("downloadProcessed", true);
-                            request.setAttribute("msg", "CSVファイルをダウンロードしました。");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            request.setAttribute("err", "CSVファイルの生成中にエラーが発生しました。");
-                        }
-                    }
-                }
-            }
             
         } catch (NamingException e) {
             e.printStackTrace(); // エラーをコンソールに出力（デバッグ目的）
@@ -88,9 +75,84 @@ public class InventoryLogList extends HttpServlet {
         rd.forward(request, response);
     }
 
-	
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	InventoryLogDAO dao=new InventoryLogDAO();
+	    String action = request.getParameter("action");
+	    String[] selectedIds = request.getParameterValues("selectedIds"); // 選択されたIDを取得
+	    
+	    System.out.println(selectedIds);
+
+	    // 最初にアクションが "downloadSelected" かをチェック
+	    if ("downloadSelected".equals(action)) {
+	        if (selectedIds != null && selectedIds.length > 0) {
+	            PrintWriter csvWriter = null;
+	            try {
+	                // 現在の日時を取得
+	                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+	                String currentDateAndTime = sdf.format(new Date());
+
+	                // CSV のファイル名
+	                String fileName = "inventoryloglist_DL " + currentDateAndTime + ".csv";
+
+	    	        // 適切なパスを選んでください
+	                String filePath = "/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Download_Files/"+ fileName;
+	    			
+	    	        //<!-- UM425QA-KIR915W -->
+	    	        //<!-- DESKTOP-KBUH9GC -->
+	    	        //<!-- String filePath = "E:\\Program Files/"+ fileName; -->
+
+	                //<!-- Raspberry Pi(192.168.10.103 ) -->
+	                //<!-- Raspberry Pi(192.168.10.122 ) -->
+	    	        //<!-- Raspberry Pi(192.168.10.118 ) -->
+	    	        //<!-- String filePath = "/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Download_Files/"+ fileName; -->
+	    	        
+	                csvWriter = new PrintWriter(filePath, "Shift-JIS");
+
+	    	        // ヘッダー行
+	    	        csvWriter.append("ID,記録日時,記録時間,機器名,取込日付,担当者No.,ロケ番,ロケ番_移動先,品名,取込個数,状態,"
+	    	        		+ "在庫/状態,ロケ番_移動元,状態_-減算,個数_-減算,状態_移動先,ロケ番_移動先,状態_+加算,在庫_+加算,保管先,登録No.,在庫管理区分");
+	    	        csvWriter.append("\n");
+
+	                // 選択されたIDごとにデータをCSVに追加
+	                for (String id : selectedIds) {
+	                	dao.downloadOneToCsv(Integer.parseInt(id), csvWriter);
+	                }
+	                csvWriter.flush();
+	                request.setAttribute("msg", selectedIds.length + "件のデータをCSVに出力しました。");
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                request.setAttribute("err", "CSV出力中にエラーが発生しました。");
+	            } finally {
+	                if (csvWriter != null) csvWriter.close();
+	            }
+	        } else {
+	            if (selectedIds == null) {
+	                request.setAttribute("err", "選択されたデータがありません。(null)");
+	            } else {
+	                request.setAttribute("err", "選択されたデータがありません。(空配列)");
+	            }
+	        }
+	    }
+	    
+	    System.out.println(selectedIds);
+	    // 最初にアクションが "deleteSelected" かをチェック
+	    if ("deleteSelected".equals(action)) {
+	    	
+	        if (selectedIds != null && selectedIds.length > 0) {
+	            for (String id : selectedIds) {
+	            	dao.deleteOne(Integer.parseInt(id)); // IDに基づいて削除
+	            }
+	            request.setAttribute("msg", selectedIds.length + "件削除しました。");
+	        }
+	        
+	        // 最新のリストを再取得してJSPに渡す
+	        List<InventoryLog> list = dao.findAll();
+	        request.setAttribute("list", list);
+	        
+	        // 完了メッセージを設定
+	        request.setAttribute("msg", selectedIds.length + "件削除しました。");
+	      }
+	    
         doGet(request, response);
 	}
     // インベントリログをリストに追加するメソッド

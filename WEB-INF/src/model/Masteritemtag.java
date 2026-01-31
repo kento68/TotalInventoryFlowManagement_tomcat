@@ -26,13 +26,14 @@ public class Masteritemtag implements Serializable{
 	private String qrcodeinformation; //QRCode情報
 	private String storagelocation; //保管先
 	private String inventorymanagementclassification; //在庫管理区分
-	private int    quantity; // 数量
+	private String quantity; // 数量
 	private String outline; // 白抜き
 	private String paperColor; // 用紙色
 	private String quantitySelectionAvailability; // 数量選択有無
-	private int    quantitySelectionRange; // 数量選択幅
+	private String quantitySelectionRange; // 数量選択幅
 	private String pattern; // パターン
 	private String photoAvailability; // 写真有無
+	private float    rate; //単価
 	
 	public Masteritemtag() {}
 	public Masteritemtag(String identifier, String identificationnumber, String vendor, String productname_asplus, String productnumber_asplus,
@@ -41,8 +42,8 @@ public class Masteritemtag implements Serializable{
 	                     String productnumber_asplus_emphasis3sub, String productnumber_asplus4sub, String productnumber_asplus5sub,
 	                     String productnumber_asplus6sub, String productnumber_asplus7sub, String productnumber_asplus8sub,
 	                     String productnumber_asplus9sub, String productnumber_Color, String qrcodeinformation, String storagelocation,
-	                     String inventorymanagementclassification, int quantity, String outline, String paperColor, 
-	                     String quantitySelectionAvailability, int quantitySelectionRange, String pattern, String photoAvailability) {
+	                     String inventorymanagementclassification, String quantity, String outline, String paperColor, 
+	                     String quantitySelectionAvailability, String quantitySelectionRange, String pattern, String photoAvailability,float rate) {
 
 	    this.identifier = identifier;
 	    this.identificationnumber = identificationnumber;
@@ -73,6 +74,7 @@ public class Masteritemtag implements Serializable{
 	    this.quantitySelectionRange = quantitySelectionRange;
 	    this.pattern = pattern;
 	    this.photoAvailability = photoAvailability;
+	    this.rate=rate;
 	}
 
 	public Masteritemtag(int id, String identifier, String identificationnumber, String vendor, String productname_asplus, String productnumber_asplus,
@@ -81,15 +83,15 @@ public class Masteritemtag implements Serializable{
 	                     String productnumber_asplus_emphasis3sub, String productnumber_asplus4sub, String productnumber_asplus5sub,
 	                     String productnumber_asplus6sub, String productnumber_asplus7sub, String productnumber_asplus8sub,
 	                     String productnumber_asplus9sub, String productnumber_Color, String qrcodeinformation, String storagelocation,
-	                     String inventorymanagementclassification, int quantity, String outline, String paperColor, 
-	                     String quantitySelectionAvailability, int quantitySelectionRange, String pattern,String photoAvailability) {
+	                     String inventorymanagementclassification, String quantity, String outline, String paperColor, 
+	                     String quantitySelectionAvailability, String quantitySelectionRange, String pattern,String photoAvailability,float rate) {
 
 	    this(identifier, identificationnumber, vendor, productname_asplus, productnumber_asplus, productname_emphasisColor, 
 	         productnumber_asplussub1, productnumber_asplus_emphasissub1, productnumber_asplus2sub, productnumber_asplus_emphasis2sub, 
 	         productnumber_asplus3sub, productnumber_asplus_emphasis3sub, productnumber_asplus4sub, productnumber_asplus5sub, 
 	         productnumber_asplus6sub, productnumber_asplus7sub, productnumber_asplus8sub, productnumber_asplus9sub, productnumber_Color, 
 	         qrcodeinformation, storagelocation, inventorymanagementclassification, quantity, outline, paperColor, 
-	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability);
+	         quantitySelectionAvailability, quantitySelectionRange, pattern, photoAvailability,rate);
 
 	    this.id = id;
 	}
@@ -278,11 +280,11 @@ public class Masteritemtag implements Serializable{
 		this.inventorymanagementclassification = inventorymanagementclassification;
 	}
 
-	public int getQuantity() {
+	public String getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(String quantity) {
 		this.quantity = quantity;
 	}
 
@@ -310,11 +312,11 @@ public class Masteritemtag implements Serializable{
 		this.quantitySelectionAvailability = quantitySelectionAvailability;
 	}
 
-	public int getQuantitySelectionRange() {
+	public String getQuantitySelectionRange() {
 		return quantitySelectionRange;
 	}
 
-	public void setQuantitySelectionRange(int quantitySelectionRange) {
+	public void setQuantitySelectionRange(String quantitySelectionRange) {
 		this.quantitySelectionRange = quantitySelectionRange;
 	}
 
@@ -333,5 +335,10 @@ public class Masteritemtag implements Serializable{
 	public void setPhotoAvailability(String photoAvailability) {
 		this.photoAvailability = photoAvailability;
 	}
-
+	public float getRate() {
+		return rate;
+	}
+	public void setRate(float rate) {
+		this.rate = rate;
+	}
 }

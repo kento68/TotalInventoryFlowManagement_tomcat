@@ -1,5 +1,6 @@
 package dao;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -21,6 +22,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 import model.InventoryLog;
@@ -40,6 +42,7 @@ private void getConnection() throws NamingException, SQLException{
 			DataSource ds = (DataSource) context.lookup("java:comp/env/jdbc/jsp");
 			this.db=ds.getConnection();
 	}
+
 	private void disconnect(){
 		try{
 			if(rs != null){rs.close();}
@@ -423,20 +426,28 @@ private void getConnection() throws NamingException, SQLException{
 			                    	InventoryLogValue21 = parts[1]; //sql← csv:inventorymanagementclassification
 			                    } else {
 			                        System.err.println("部品の解析中にエラーが発生しました。value8 の長さが4桁ではありません: " + parts[1]);
-			                        continue; // あるいはエラー処理などを行う
+			                        String errorMessage = "部品の解析中にエラーが発生しました。value8 の長さが4桁ではありません: " + parts[1];
+			                        throw new IllegalArgumentException(errorMessage); // IllegalArgumentExceptionをスロー
 			                    }
 			                } else {
 			                    // どれかの要素が null の場合は処理を中断する
 			                    System.err.println("部品の解析中にエラーが発生しました。部品データが不完全です");
-			                    continue; // あるいはエラー処理などを行う
+		                        String errorMessage = "部品の解析中にエラーが発生しました。部品データが不完全です";
+		                        throw new IllegalArgumentException(errorMessage); // IllegalArgumentExceptionをスロー
 			                }
 			            } else {
 			                // parts の長さが足りない場合の処理
 			                System.err.println("部品の解析中にエラーが発生しました。parts の長さが足りません");
-			                continue; // あるいはエラー処理などを行う
+	                        String errorMessage = "部品の解析中にエラーが発生しました。parts の長さが足りません";
+	                        throw new IllegalArgumentException(errorMessage); // IllegalArgumentExceptionをスロー
 			            }
-			        }
-
+		            } else {
+		            	 // 一致しない場合の処理
+		                System.out.println("部品名のパターンに一致しませんでした: " + values[5]);
+                        String errorMessage = "部品名のパターンに一致しませんでした:";
+                        throw new IllegalArgumentException(errorMessage); // IllegalArgumentExceptionをスロー
+		            }
+			        
 			        // 各フィールドの値を変数に代入
 			        java.sql.Date InventoryLogValue1 = new java.sql.Date(dateFormat.parse(values[0]).getTime());
 			        java.sql.Time InventoryLogValue2 = new java.sql.Time(timeFormat.parse(values[1]).getTime());
@@ -492,6 +503,9 @@ private void getConnection() throws NamingException, SQLException{
 			        System.err.println("日付の解析中にエラーが発生しました: " + Arrays.toString(values) + ". " + e.getMessage());
 			    } catch (NumberFormatException e) {
 			        System.err.println("行の解析中にエラーが発生しました: " + Arrays.toString(values) + ". " + e.getMessage());
+			    } catch (IllegalArgumentException e) {
+			        String errorMessage = "制約違反エラーが発生しました: " + e.getMessage();
+			        throw new IllegalArgumentException(errorMessage, e);
 			    }
 			} else if ("MoveLog".equals(values[2])) {
 			    processMoveLog(values, inventoryLogList);
@@ -531,21 +545,30 @@ private void getConnection() throws NamingException, SQLException{
                         // value8 の確認
                         if (parts[1].length() == 4) {
                         	InventoryLogValue21 = parts[1]; //sql← csv:inventorymanagementclassification
-                        } else {
+	                    } else {
 	                        System.err.println("部品の解析中にエラーが発生しました。value8 の長さが4桁ではありません: " + parts[1]);
-	                        return; // あるいはエラー処理などを行う
+	                        String errorMessage = "部品の解析中にエラーが発生しました。value8 の長さが4桁ではありません: " + parts[1];
+	                        throw new IllegalArgumentException(errorMessage); // IllegalArgumentExceptionをスロー
 	                    }
 	                } else {
 	                    // どれかの要素が null の場合は処理を中断する
 	                    System.err.println("部品の解析中にエラーが発生しました。部品データが不完全です");
-	                    return; // あるいはエラー処理などを行う
+                        String errorMessage = "部品の解析中にエラーが発生しました。部品データが不完全です";
+                        throw new IllegalArgumentException(errorMessage); // IllegalArgumentExceptionをスロー
 	                }
 	            } else {
 	                // parts の長さが足りない場合の処理
 	                System.err.println("部品の解析中にエラーが発生しました。parts の長さが足りません");
-	                return; // あるいはエラー処理などを行う
+                    String errorMessage = "部品の解析中にエラーが発生しました。parts の長さが足りません";
+                    throw new IllegalArgumentException(errorMessage); // IllegalArgumentExceptionをスロー
 	            }
-	        }
+            } else {
+            	 // 一致しない場合の処理
+                System.out.println("部品名のパターンに一致しませんでした: " + values[5]);
+                String errorMessage = "部品名のパターンに一致しませんでした:";
+                throw new IllegalArgumentException(errorMessage); // IllegalArgumentExceptionをスロー
+            }
+            
             // 各フィールドの値を変数に代入
             java.sql.Date InventoryLogValue1 = new java.sql.Date(dateFormat.parse(values[0]).getTime());
             java.sql.Time InventoryLogValue2 = new java.sql.Time(timeFormat.parse(values[1]).getTime());       
@@ -602,15 +625,18 @@ private void getConnection() throws NamingException, SQLException{
             System.err.println("日付の解析中にエラーが発生しました: " + Arrays.toString(values) + ". " + e.getMessage());
         } catch (NumberFormatException e) {
             System.err.println("行の解析中にエラーが発生しました: " + Arrays.toString(values) + ". " + e.getMessage());
-        }
+	    } catch (IllegalArgumentException e) {
+	        String errorMessage = "制約違反エラーが発生しました: " + e.getMessage();
+	        throw new IllegalArgumentException(errorMessage, e);
+	    }
+	    
 	}
 	
-	public void save(List<InventoryLog> inventorylogList, List<Inventorymanagementinquiry> inventorymanagementinquiries, List<String> allLines) throws NamingException {
-	    PreparedStatement ps = null;
-	    ResultSet rs = null;
+	public void save(List<InventoryLog> inventorylogList, List<Inventorymanagementinquiry> inventorymanagementinquiries, List<String> allLines, HttpServletRequest request) throws NamingException {
 
 	    try {
-	        this.getConnection();
+	        this.getConnection(); // データベース接続を取得
+	        db.setAutoCommit(false); // トランザクションの自動コミットを無効にする
 
 	        // 日付フォーマットの定義
 	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -620,8 +646,8 @@ private void getConnection() throws NamingException, SQLException{
 	        for (Inventorymanagementinquiry inquiry : inventorymanagementinquiries) {
 	            inquiryMap.put(inquiry.getRemarks(), inquiry);
 	        }
-	        
-	     // InventoryLog リストをソートする
+
+	        // InventoryLog リストをソートする
 	        List<InventoryLog> sortedList = new ArrayList<>(inventorylogList);
 	        sortedList.sort((o1, o2) -> {
 	            try {
@@ -634,9 +660,6 @@ private void getConnection() throws NamingException, SQLException{
 	            }
 	        });
 
-	        // トランザクション開始
-	        db.setAutoCommit(false);
-	        
 	        Set<String> processedLogs = new HashSet<>();
 
 	        for (InventoryLog inventoryLog : sortedList) {
@@ -655,29 +678,35 @@ private void getConnection() throws NamingException, SQLException{
 	                        case "RetrievalLog":
 	                        case "MoveLog":
 	                        case "InventoryLog":
-	                        	processLog(db, ps, inventoryLog, matchingInquiry);
+	                            processLog(db, ps, inventoryLog, matchingInquiry, request);
 	                            break;
 	                        default:
 	                            System.out.println("Unknown device name: " + inventoryLog.getDevicename());
+	                            throw new IllegalArgumentException("Unknown device name: " + inventoryLog.getDevicename());
 	                    }
 	                }
 	                processedLogs.add(inventoryLog.getRemarks());
 	            } else {
 	                System.out.println("No matching Inventorymanagementinquiry for InventoryLog: " + inventoryLog.getRemarks());
+	                throw new IllegalArgumentException("No matching Inventorymanagementinquiry for InventoryLog: " + inventoryLog.getRemarks());
 	            }
 	        }
 
-	        // コミット
-	        db.commit();
+	        db.commit(); // 成功したらコミット
+
+	    } catch (IllegalArgumentException e) {
+	        request.setAttribute("err", "不正な入力がありました: " + e.getMessage());
+	        
 	    } catch (Exception e) {
-	        try {
-	            if (db != null) {
-	                db.rollback();
+	        if (db != null) {
+	            try {
+	                db.rollback(); // エラーが発生した場合はロールバック
+	            } catch (SQLException se) {
+	                se.printStackTrace();
 	            }
-	        } catch (SQLException se) {
-	            se.printStackTrace();
 	        }
-	        e.printStackTrace();
+	        e.printStackTrace(); // エラーをログに出力
+	        // エラーメッセージは設定しない
 	    } finally {
 	        try {
 	            if (ps != null) ps.close();
@@ -688,15 +717,15 @@ private void getConnection() throws NamingException, SQLException{
 	        }
 	    }
 	}
-	
-	private void processLog(Connection db, PreparedStatement ps, InventoryLog inventoryLog, Inventorymanagementinquiry inventorymanagementinquiry) throws SQLException {
 
+	private void processLog(Connection db, PreparedStatement ps, InventoryLog inventoryLog, Inventorymanagementinquiry inventorymanagementinquiry, HttpServletRequest request) throws SQLException {
+	    try {
 	        // InventoryLog の新規レコードを挿入する
 	        ps = db.prepareStatement("INSERT INTO logs (recorddate, recordtime, devicename, importdate, personinchargeno, locationnumber, locationnumberdestination, "
-	        		+ "productname, importquantity, status, inventory_status, locationnumber_m1, status_m1, quantity, status2, locationnumber_m2, status_m2, inventory, "
-	        		+ "storagelocation, identificationnumber, inventorymanagementclassification, remarks) "
-	        		+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        
+	                + "productname, importquantity, status, inventory_status, locationnumber_m1, status_m1, quantity, status2, locationnumber_m2, status_m2, inventory, "
+	                + "storagelocation, identificationnumber, inventorymanagementclassification, remarks) "
+	                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
 	        ps.setDate(1, inventoryLog.getRecorddate());
 	        ps.setTime(2, inventoryLog.getRecordtime());
 	        ps.setString(3, inventoryLog.getDevicename());
@@ -705,24 +734,30 @@ private void getConnection() throws NamingException, SQLException{
 	        ps.setString(6, inventoryLog.getLocationnumber());
 	        ps.setString(7, inventoryLog.getLocationnumberdestination());
 	        ps.setString(8, inventoryLog.getProductname());
-        	ps.setInt(9, inventoryLog.getImportquantity());
-        	ps.setString(10, inventoryLog.getStatus());
-        	ps.setString(11, inventoryLog.getInventory_status());
-        	ps.setString(12, inventoryLog.getLocationnumber_m1());
-        	ps.setString(13, inventoryLog.getStatus_m1());
-        	ps.setInt(14, inventoryLog.getQuantity());
-        	ps.setString(15, inventoryLog.getStatus2());
-        	ps.setString(16, inventoryLog.getLocationnumber_m2());
-        	ps.setString(17, inventoryLog.getStatus_m2());
-        	ps.setInt(18, inventoryLog.getInventory());
-        	ps.setString(19, inventoryLog.getStoragelocation());
-        	ps.setString(20, inventoryLog.getIdentificationnumber());
-        	ps.setString(21, inventoryLog.getInventorymanagementclassification());
-        	ps.setString(22, inventoryLog.getRemarks());
-        
-        	ps.executeUpdate();
+	        ps.setInt(9, inventoryLog.getImportquantity());
+	        ps.setString(10, inventoryLog.getStatus());
+	        ps.setString(11, inventoryLog.getInventory_status());
+	        ps.setString(12, inventoryLog.getLocationnumber_m1());
+	        ps.setString(13, inventoryLog.getStatus_m1());
+	        ps.setInt(14, inventoryLog.getQuantity());
+	        ps.setString(15, inventoryLog.getStatus2());
+	        ps.setString(16, inventoryLog.getLocationnumber_m2());
+	        ps.setString(17, inventoryLog.getStatus_m2());
+	        ps.setInt(18, inventoryLog.getInventory());
+	        ps.setString(19, inventoryLog.getStoragelocation());
+	        ps.setString(20, inventoryLog.getIdentificationnumber());
+	        ps.setString(21, inventoryLog.getInventorymanagementclassification());
+	        ps.setString(22, inventoryLog.getRemarks());
+
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        // SQLException をキャッチしてエラーメッセージを設定
+	        String errorMessage = "制約違反エラーが発生しました: " + e.getMessage();
+	        request.setAttribute("err", errorMessage);
+	        throw new IllegalArgumentException(errorMessage, e);
 	    }
-	
+	}
+
     //インポート時 recorddate & recordtime & importdate がかぶっているか確認
 	private boolean existsInDatabase1(java.sql.Date recorddate, java.sql.Time recordtime, String importdate) throws SQLException {
 	    PreparedStatement ps = null;
@@ -749,90 +784,69 @@ private void getConnection() throws NamingException, SQLException{
 	    }
 	}
 	
-	public void downloadAll() throws IOException {
-	    PrintWriter csvWriter = null;
-
-	    try {
-	        // データベース接続の取得
-	        this.getConnection();
-	        
-	        // SQL クエリの準備
-	        ps = db.prepareStatement("SELECT * FROM logs");
-	        rs = ps.executeQuery();
-	        
-	        // 現在の日時を取得
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-            String currentDateAndTime = sdf.format(new java.util.Date());
-
-            // CSV のファイル名
-            String fileName = "inventoryloglist_DL " + currentDateAndTime + ".csv";
-
-	        // 適切なパスを選んでください
-            String filePath = "/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Download_Files/"+ fileName;
-			
-	        //<!-- UM425QA-KIR915W -->
-	        //<!-- DESKTOP-KBUH9GC -->
-	        //<!-- String filePath = "E:\\Program Files/"+ fileName; -->
-
-            //<!-- Raspberry Pi(192.168.10.103 ) -->
-            //<!-- Raspberry Pi(192.168.10.122 ) -->
-	        //<!-- Raspberry Pi(192.168.10.118 ) -->
-	        //<!-- String filePath = "/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Download_Files/"+ fileName; -->
-	        
-	        // CSV Writer の準備
-	        csvWriter = new PrintWriter(filePath, "Shift-JIS");
-
-	        // ヘッダー行
-	        csvWriter.append("ID,記録日時,記録時間,機器名,取込日付,担当者No.,ロケ番,ロケ番_移動先,品名,取込個数,状態,在庫/状態,ロケ番_移動元,状態_-減算,個数_-減算,状態_移動先,ロケ番_移動先,状態_+加算,在庫_+加算,保管先,登録No.,在庫管理区分");
-	        csvWriter.append("\n");
-
-	        // データ行の書き出し
-	        while (rs.next()) {
-	            csvWriter.append(rs.getInt("id") + ",");
-	            csvWriter.append(rs.getDate("recorddate") + ",");
-	            csvWriter.append(rs.getTime("recordtime") + ",");
-	            csvWriter.append(rs.getString("devicename") + ",");
-	            csvWriter.append(rs.getString("importdate") + ",");
-	            csvWriter.append(rs.getString("personinchargeno") + ",");
-	            csvWriter.append(rs.getString("locationnumber") + ",");
-	            csvWriter.append(rs.getString("locationnumberdestination") + ",");
-	            csvWriter.append(rs.getString("productname") + ",");
-	            csvWriter.append(rs.getInt("importquantity") + ",");
-	            csvWriter.append(rs.getString("status") + ",");
-	            csvWriter.append(rs.getString("inventory_status") + ",");
-	            csvWriter.append(rs.getString("locationnumber_m1") + ",");
-	            csvWriter.append(rs.getString("status_m1") + ",");
-	            csvWriter.append(rs.getInt("quantity") + ",");
-	            csvWriter.append(rs.getString("status2") + ",");
-	            csvWriter.append(rs.getString("locationnumber_m2") + ",");
-	            csvWriter.append(rs.getString("status_m2") + ",");
-	            csvWriter.append(rs.getInt("inventory") + ",");
-	            csvWriter.append(rs.getString("storagelocation") + ",");
-	            csvWriter.append(rs.getString("identificationnumber") + ",");
-	            csvWriter.append(rs.getString("inventorymanagementclassification"));
-	            csvWriter.append("\n");
-	        }
-
-	        // ファイルへの書き込み
-	        csvWriter.flush();
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    } catch (NamingException e) {
-	        e.printStackTrace();
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    } finally {
-	        // リソースのクリーンアップ
+	public void downloadOneToCsv(int id, PrintWriter csvWriter) throws NamingException, IOException {
+	    PreparedStatement ps = null;
+	    ResultSet rs = null;
+	    BufferedWriter bufferedWriter = new BufferedWriter(csvWriter, 8192); // 8KBバッファ
+		    
 	        try {
-	            if (rs != null) rs.close();
-	            if (ps != null) ps.close();
-	            if (db != null) db.close();
-	            if (csvWriter != null) csvWriter.close();
+		        // データベース接続の取得
+		        this.getConnection();
+		        
+		        // SQL クエリの準備
+	            ps = db.prepareStatement("SELECT * FROM logs WHERE id=?");
+	            ps.setInt(1, id); // パラメータを設定
+	            rs = ps.executeQuery();
+	            
+	            int rowCount = 0; // 行数カウント
+	            StringBuilder sb = new StringBuilder(); // 文字列バッファ
+	            
+	            // データ行の書き出し
+		        // データ行の書き出し
+		        while (rs.next()) {
+		            csvWriter.append(rs.getInt("id") + ",");
+		            csvWriter.append(rs.getDate("recorddate") + ",");
+		            csvWriter.append(rs.getTime("recordtime") + ",");
+		            csvWriter.append(rs.getString("devicename") + ",");
+		            csvWriter.append(rs.getString("importdate") + ",");
+		            csvWriter.append(rs.getString("personinchargeno") + ",");
+		            csvWriter.append(rs.getString("locationnumber") + ",");
+		            csvWriter.append(rs.getString("locationnumberdestination") + ",");
+		            csvWriter.append(rs.getString("productname") + ",");
+		            csvWriter.append(rs.getInt("importquantity") + ",");
+		            csvWriter.append(rs.getString("status") + ",");
+		            csvWriter.append(rs.getString("inventory_status") + ",");
+		            csvWriter.append(rs.getString("locationnumber_m1") + ",");
+		            csvWriter.append(rs.getString("status_m1") + ",");
+		            csvWriter.append(rs.getInt("quantity") + ",");
+		            csvWriter.append(rs.getString("status2") + ",");
+		            csvWriter.append(rs.getString("locationnumber_m2") + ",");
+		            csvWriter.append(rs.getString("status_m2") + ",");
+		            csvWriter.append(rs.getInt("inventory") + ",");
+		            csvWriter.append(rs.getString("storagelocation") + ",");
+		            csvWriter.append(rs.getString("identificationnumber") + ",");
+		            csvWriter.append(rs.getString("inventorymanagementclassification"));
+		            csvWriter.append("\n");
+		            
+		            bufferedWriter.write(sb.toString());
+
+		            rowCount++;
+		            if (rowCount % 100 == 0) { // 100行ごとにflush
+		                bufferedWriter.flush();
+		            }
+		        }
+		        bufferedWriter.flush(); // 最後にflush
+
 	        } catch (SQLException e) {
 	            e.printStackTrace();
+	        } finally {
+	            try {
+	                if (rs != null) rs.close();
+	                if (ps != null) ps.close();
+	                if (db != null) db.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
 	        }
-	    }
-	 }
+	  }
 }
-
-

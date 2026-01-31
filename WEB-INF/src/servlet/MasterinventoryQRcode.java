@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.google.zxing.BarcodeFormat;
@@ -45,35 +46,64 @@ public class MasterinventoryQRcode extends HttpServlet {
         HttpSession session = request.getSession();
         User loginUser = (User) session.getAttribute("loginUser");
 
-        if (action != null && action.equals("qrcode")) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            Masterinventory masterinventory = dao.qrCreate(id);
-            if (masterinventory != null) {
-                createLabelImage(response, masterinventory);
+        try {
+            if (action != null && action.equals("qrcode")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                Masterinventory masterinventory = dao.qrCreate(id);
+                if (masterinventory != null) {
+                    createLabelImage(response, masterinventory);
 
-                // 印刷するかどうかの確認ダイアログを表示
-                int printResponse = JOptionPane.showConfirmDialog(
-                        null,
-                        "印刷しますか？",
-                        "印刷確認",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE
-                );
+                    // JFrameを作成
+                    JFrame jf = new JFrame();
+                    jf.setAlwaysOnTop(true);
+                    jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    jf.setUndecorated(true); // ウィンドウの装飾を削除する場合
+                    jf.setSize(0, 0); // サイズをゼロにして非表示にする
+                    jf.setLocationRelativeTo(null); // 画面の中央に配置
 
-                // ユーザーが印刷を選択した場合の処理
-                if (printResponse == JOptionPane.YES_OPTION) {
-                    printDocument();
+                    // 印刷するかどうかの確認ダイアログを表示
+                    int printResponse = JOptionPane.showConfirmDialog(
+                            jf,
+                            "印刷しますか？",
+                            "印刷確認",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+
+                    // ユーザーが印刷を選択した場合の処理
+                    if (printResponse == JOptionPane.YES_OPTION) {
+                        printDocument();
+                    } else {
+                        System.out.println("印刷はキャンセルされました。");
+                    }
+
+                    // JFrameを閉じる
+                    jf.dispose();
+                    return;
                 } else {
-                    System.out.println("印刷はキャンセルされました。");
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory not found");
+                    return;
                 }
-
-                return;
-            } else {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Inventory not found");
-                return;
             }
-        }
 
+            // 他の処理が必要であればここに追加
+
+        } catch (NumberFormatException e) {
+            // IDの変換に失敗した場合の処理
+            request.setAttribute("err", "無効なIDが指定されました。");
+            request.setAttribute("list", dao.findAll()); // エラー時でもリストを表示
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/masterinventorylist.jsp");
+            rd.forward(request, response);
+
+        } catch (Exception e) {
+            // エラー発生時の処理
+            e.printStackTrace(); // エラーログを出力（デバッグ用）
+            request.setAttribute("err", "登録データに不備があります。「更新」ボタンを押して、登録し直してください"); // エラーメッセージを設定
+            request.setAttribute("list", dao.findAll()); // エラー時でもリストを表示
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/view/masterinventorylist.jsp");
+            rd.forward(request, response);
+        }
+        
         List<Masterinventory> list = dao.findAll();
         request.setAttribute("list", list);
 
@@ -82,7 +112,7 @@ public class MasterinventoryQRcode extends HttpServlet {
     }
 
     private String createLabelImage(HttpServletResponse response, Masterinventory masterinventory) throws IOException {
-    	 BufferedImage bufferedImage = ImageIO.read(new File("E:\\Program Files/eclipse/workspace/totalInventoryFlowManagement/Picture/Masterinventory/PhysicalSlipTemplate.png"));
+    	BufferedImage bufferedImage = ImageIO.read(new File("/var/samba/Data_Transfer/TotalInventoryFlowManagement_tomcat/Export_Files/Picture/Masterinventory/PhysicalSlipTemplate.png"));
     	 
 	        //<!-- UM425QA-KIR915W -->
 	        //<!-- DESKTOP-KBUH9GC -->
@@ -100,9 +130,25 @@ public class MasterinventoryQRcode extends HttpServlet {
 
         // テキストの描画位置と内容を調整
         //品名
-        g2d.drawString(masterinventory.getProductname_asplus(), 20, 90);
+        g2d.drawString(masterinventory.getProductname_asplus(), 10, 90);
+        
         //QRコード名
-        g2d.drawString(masterinventory.getQrcodeinformation(), 20, 150);
+        String qrcodeInfo = masterinventory.getQrcodeinformation();
+        if (qrcodeInfo == null || qrcodeInfo.isEmpty()) {
+            return ""; // または null を返すこともできます
+        }
+
+        int slashIndex = qrcodeInfo.indexOf('/');
+
+        // 最初の / が見つからなかった場合は、元の文字列を返す
+        if (slashIndex == -1) {
+            return qrcodeInfo; // または null や空文字を返すこともできます
+        }
+
+        // 最初の / 以降の文字列を抜き取る
+        String result = qrcodeInfo.substring(slashIndex + 1);
+        g2d.drawString(result, 10, 150);
+        
         //保管場所
         g2d.drawString(masterinventory.getStoragelocation(), 160, 330);
         //会社名

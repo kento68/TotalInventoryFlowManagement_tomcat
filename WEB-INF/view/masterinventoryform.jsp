@@ -14,6 +14,7 @@
 	String productnumber_correction=masterinventory == null ? "":masterinventory.getProductnumber_correction();
 	String qrcodeinformation=masterinventory == null ? "":masterinventory.getQrcodeinformation();
 	String storagelocation=masterinventory == null ? "":masterinventory.getStoragelocation();
+	String rate = masterinventory == null ? "" : String.valueOf(masterinventory.getRate());
 	String inventorymanagementclassification=masterinventory == null ? "":masterinventory.getInventorymanagementclassification();
 	
 	String id=masterinventory==null ? "":String.valueOf(masterinventory.getId());
@@ -117,6 +118,7 @@
         <option value="自動倉庫">自動倉庫</option>
         <option value="テント倉庫">テント倉庫</option>
         <option value="工場内">工場内</option>
+        <option value="不明">不明</option>
     </select>
  </div>
  <div class="form-group col-sm-6">
@@ -128,7 +130,11 @@
         <option value="9182">9184:部品</option>
         <option value="9185">9185:材料</option>
         <option value="8888">8888:副資材</option>
+        <option value="9144">9144:外注部品</option>
+        <option value="9142">9142:外注仕掛品</option>
+        <option value="9141">9141:外注完成品</option>
         <option value="9999">9999:/</option>
+        <option value="0">0000：不明</option>
     </select>
  </div>
 </div>
@@ -141,6 +147,13 @@
   <div class="form-group col-sm-6">
   	<button type="button" class="btn btn-primary custom-btn" id="qrcodegenerationinformation" style="margin-top: 32px;">QRCode生成</button>
    </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group col-sm-6">
+    <label for="rate" class="required-label" id="rate_label"><b>単価:</b></label>
+    <input type="float" class="form-control" id="rate" name="rate" value="<%=rate%>" placeholder="単価を入力してください" >
+  </div>
 </div>
 
 <%if(!id.isEmpty()) {%>
@@ -336,6 +349,20 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
+
+<!-- 単価:初期値に基づいて分岐 -->
+document.addEventListener('DOMContentLoaded', function () {
+	var rateValue = '<%=rate%>';
+    var selectElement = document.getElementsByName('rate')[0]; 
+
+    // 初期値が空の場合は何も選択しない
+    if (!rateValue) {
+        selectElement.value = '';
+    } else {
+        // 初期値が存在する場合は対応するオプションを選択
+        selectElement.value = rateValue;
+    }
+});
 
 </script>
 </body>

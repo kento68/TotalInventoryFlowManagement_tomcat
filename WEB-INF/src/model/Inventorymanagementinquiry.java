@@ -19,6 +19,7 @@ public class Inventorymanagementinquiry implements Serializable{
 	private int    decision; //確定
 	private String remarks; //備考
 	private String fileattributes; //ファイル属性
+	private float    rate; //単価
 	
     private String date;
     private String time;
@@ -28,7 +29,7 @@ public class Inventorymanagementinquiry implements Serializable{
 	public Inventorymanagementinquiry(String identificationnumber,String productname_productnumber,String qrcodeinformation,
 			                          String locationnumber,String locationnumberdestination,int initialinventory,
 			                          int theoreticalinventory,String inventorymanagementclassification,
-			                          int inventorystock,int investigationrequired,int decision,String remarks,String fileattributes){
+			                          int inventorystock,int investigationrequired,int decision,String remarks,String fileattributes,float rate){
 		
 		this.identificationnumber=identificationnumber;
 		this.productname_productnumber=productname_productnumber;
@@ -43,14 +44,15 @@ public class Inventorymanagementinquiry implements Serializable{
 		this.decision=decision;
 		this.remarks=remarks;
 		this.fileattributes=fileattributes;
+		this.rate=rate;
 	}
 	public Inventorymanagementinquiry(int id,String identificationnumber,String productname_productnumber,String qrcodeinformation,
 			                          String locationnumber,String locationnumberdestination,int initialinventory,
                                       int theoreticalinventory,String inventorymanagementclassification,
-                                      int inventorystock,int investigationrequired,int decision,String remarks,String fileattributes){
+                                      int inventorystock,int investigationrequired,int decision,String remarks,String fileattributes,float rate){
 		
 		this(identificationnumber,productname_productnumber,qrcodeinformation,locationnumber,locationnumberdestination,initialinventory,theoreticalinventory,inventorymanagementclassification,
-				inventorystock,investigationrequired,decision,remarks,fileattributes);
+				inventorystock,investigationrequired,decision,remarks,fileattributes,rate);
 		
 		this.id=id;
 	}
@@ -138,6 +140,12 @@ public class Inventorymanagementinquiry implements Serializable{
 	public void setFileattributes(String fileattributes) {
 		this.fileattributes = fileattributes;
 	}
+	public float getRate() {
+		return rate;
+	}
+	public void setRate(float rate) {
+		this.rate = rate;
+	}
 	public String getDate() {
 		return date;
 	}
@@ -167,16 +175,4 @@ public class Inventorymanagementinquiry implements Serializable{
     }
     // DateTimeFormatterを用意
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-
-    // 日付と時間からLocalDateTimeを更新するメソッド
-    private void updateTimestamp() {
-        if (date != null && time != null) {
-            try {
-                this.timestamp = LocalDateTime.parse(date + " " + time, formatter);
-            } catch (Exception e) {
-                e.printStackTrace();
-                // フォーマットエラー時の処理
-            }
-        }
-    }
 }

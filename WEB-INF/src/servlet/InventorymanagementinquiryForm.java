@@ -59,21 +59,18 @@ public class InventorymanagementinquiryForm extends HttpServlet {
 		String decision=request.getParameter("decision");
 		String remarks=request.getParameter("remarks");
 		String fileattributes=request.getParameter("fileattributes");
+		String rate=request.getParameter("rate");
 	
-		if(identificationnumber.isEmpty() || qrcodeinformation.isEmpty()){
-			request.setAttribute("err","未記入の項目があります！");
-		}else{
-			InventorymanagementinquiryDAO dao=new InventorymanagementinquiryDAO();
-			String id=request.getParameter("id");
-			if(id != null){
-				dao.updateOne(new Inventorymanagementinquiry(Integer.parseInt(id),identificationnumber,
-						productname_productnumber,qrcodeinformation,locationnumber,locationnumberdestination,
-						Integer.parseInt(initialinventory),Integer.parseInt(theoreticalinventory),inventorymanagementclassification,
-						Integer.parseInt(inventorystock),Integer.parseInt(investigationrequired),Integer.parseInt(decision),remarks,fileattributes));
-				request.setAttribute("msg","1件更新しました。");
-			}
-		}
 		InventorymanagementinquiryDAO dao=new InventorymanagementinquiryDAO();
+		String id=request.getParameter("id");
+		if(id != null){
+			dao.updateOne(new Inventorymanagementinquiry(Integer.parseInt(id),identificationnumber,
+					productname_productnumber,qrcodeinformation,locationnumber,locationnumberdestination,
+					Integer.parseInt(initialinventory),Integer.parseInt(theoreticalinventory),inventorymanagementclassification,
+					Integer.parseInt(inventorystock),Integer.parseInt(investigationrequired),Integer.parseInt(decision),remarks,fileattributes,Float.parseFloat(rate)));
+			request.setAttribute("msg","1件更新しました。");
+		}
+
 		String action=request.getParameter("action");
 		
 		List<Inventorymanagementinquiry> list=dao.findAll();

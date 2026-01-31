@@ -2,6 +2,9 @@
     pageEncoding="UTF-8" import="model.*,java.util.*"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
+	String err=(String)request.getAttribute("err");
+	String msg=(String)request.getAttribute("msg");
+	
 	// セッションスコープからユーザー情報を取得
 	User loginUser = (User) session.getAttribute("loginUser");
 %>
@@ -18,6 +21,17 @@
 <title>TotalInventoryFlowManagement</title>
 </head>
 <body>
+
+<% if(err != null){ %>
+    <div class="alert alert-danger" role="alert" id="errMsg">
+        <%= err %>
+    </div>
+<% } %>
+<% if (msg != null) { %>
+    <div class="alert alert-success" role="alert" id="successMsg">
+        <%= msg %>
+    </div>
+<% } %>
 
 <div class="container-fluid" style="margin-top: 40px;">
 
